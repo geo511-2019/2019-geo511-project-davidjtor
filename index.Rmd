@@ -1,6 +1,6 @@
 ---
-title: "I have the best titles"
-author: Your name here
+title: "GEO 511: Spatial Data Science Project"
+author: David Torgerson
 subtitle: Subtitle here if desired
 ---
 
