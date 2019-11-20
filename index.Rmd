@@ -2,6 +2,7 @@
 title: "GEO 511: Spatial Data Science Project"
 author: David Torgerson
 subtitle: Contributing to the National Phenology Network
+code_folding: hide
 ---
 
 # Introduction
@@ -11,11 +12,12 @@ For my project, I'm looking at ecological data, specifically about a variety of 
 
 Narrative and most code will go here.  Describe what you are doing and show how to do it (with code).
 
-* First, I had to retrieve the data that is stored online.
-* Next, I had to pull the two data sources together and perform some exploratory analysis.
-* Next, I generated some graphs that show some interesting finds about the data.
+* Install/Download the appropriate libraries
+* Retrieve the data that is stored online.
+* Pull the two data sources together and perform some exploratory analysis.
+* Generate some graphs that show some interesting finds about the data.
 
-Load any required packages in a code chunk (you may need to install some packages):
+Load all packages (you may need to install some packages):
 
 ```{r, message=F, warning=F, echo=TRUE}
 library(tidyverse)
@@ -28,20 +30,25 @@ library(sf)
 library(spData)
 library(ggmap)
 library(kableExtra)
+library(knitr)
+library(data.table)
+library(broom)
 knitr::opts_chunk$set(cache=TRUE)  # cache the results for quick compiling
 ```
 
 ## Download and clean all required data
-```{r}
-d <- npn_download_status_data("Your Name",
-                              years=c('2019'),
-                              network_ids=c(891))
+```{r, warning=FALSE, message=FALSE}
+d=npn_download_status_data("Testing",
+                           years=c('2019'),
+                           additional_fields=list("Plant_Nickname"), 
+                           network_ids=c(891))
 
 d_filtered <- d %>%
   rename("a"="intensity_value") %>% 
   mutate(
-    date=as.Date(observation_date),
+    date = as.Date(observation_date),
     month = month(date),
+    tag = as.numeric(substr(plant_nickname,1,3)),
     intensity=case_when(
       a == "Less than 5%" ~ 2.5,
       a == "Less than 25%" ~ 20,
@@ -68,19 +75,62 @@ d_filtered <- d_filtered %>%
   ))
 
 trees <- read_csv("trees.csv")
+
+trees <- trees %>% 
+  mutate(color = case_when (
+    common_name == "Red Oak" ~ "red",
+    common_name == "Black Oak" ~ "black",
+    common_name == "Silver Maple" ~ "darkblue",
+    common_name == "Red Maple" ~ "orange",
+    common_name == "Black Locust" ~ "purple",
+    common_name == "Sugar Maple" ~ "darkpurple",
+    common_name == "Staghorn Sumac" ~ "blue",
+    common_name == "Eastern Cottonwood" ~ "beige",
+    common_name == "Apple" ~ "yellow",
+    common_name == "American Basswood" ~ "pink",
+    common_name == "River Birch" ~ "lightred",
+    common_name == "White Birch" ~ "cadetblue",
+    common_name == "Ginkgo" ~ "lightgray"
+  ))
 ```
 
+# Exploratory Data Analysis
+```{r, warning=FALSE, message=FALSE, results='asis'}
+table <- prop.table(table(d$common_name)) * 100
+table %>%
+  kable(col.names = c("Common Name","Percentage of Observations"), digits = 2)
+#The table above shows the percentage of observations of each tree.
+d_filtered %>%
+  group_by(tag) %>%
+  summarize(var_intensity = var(intensity,na.rm = TRUE),
+            mean_intensity = mean(intensity, na.rm = TRUE)) %>%
+  filter(var_intensity != 0) %>%
+  kable(digits = 2, col.names = c("Tag ID","Intensity Variance","Intensity Average")) %>%
+  data.table()
+#The above looks at the mean and variance of each tagged tree.
+
+```
 # Results
 
 ```{r, fig.width=6, fig.height=3, fig.cap="Map of completely random data"}
-leaflet() %>%
+#Making Icons
+icons <- awesomeIcons(
+  icon = 'ios-close',
+  iconColor = 'white',
+  library = 'ion',
+  markerColor = trees$color)
+
+#Interactive Leaflet Map
+leaflet(trees) %>% 
   addTiles() %>%
- ## addPolygons(data = state, fillColor = "NA", color = "NA") %>%
-  addCircleMarkers(data = trees, ~lon, ~lat, popup = ~common_name)
+  addAwesomeMarkers(~lon, ~lat,
+                    icon=icons,
+                    label = paste("Tag:", trees$tag, "|",
+                    "Species:", trees$common_name))
 ```
 
 
-```{r}
+```{r, warning=FALSE}
 d_filtered %>%
   ggplot(aes(x = date, y = intensity, color = leaf_drop)) +
   geom_point() +
