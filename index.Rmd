@@ -110,7 +110,15 @@ d_filtered %>%
   filter(var_intensity != 0) %>%
   kable(digits = 2, col.names = c("Tag ID","Intensity Variance","Intensity Average")) %>% kable_styling() %>% scroll_box(width = "500px", height = "200px")
 ##The above looks at the mean and variance of each tagged tree.
-
+d_filtered %>%
+  group_by(tag,observedby_person_id) %>%
+  summarize(var_intensity = var(intensity,na.rm = TRUE)) %>%
+  filter(var_intensity != 0) %>%
+  kable(digits = 2,
+        col.names = c("Tag ID","Person ID","Intensity Variance")) %>%
+  kable_styling() %>%
+  scroll_box(width = "500px", height = "200px")
+#This table is just to show how much variability there is in Citizen Science.
 ```
 # Results
 

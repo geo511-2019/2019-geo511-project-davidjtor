@@ -21,7 +21,8 @@ library(kableExtra)
 #Getting and defining data
 d=npn_download_status_data("Testing",
                            years=c('2019'),
-                           additional_fields=list("Plant_Nickname"), 
+                           additional_fields=list("Plant_Nickname",
+                                                  "ObservedBy_Person_ID"), 
                            network_ids=c(891))
 
 #Cleaning the intensity column
@@ -103,6 +104,14 @@ d_filtered %>%
   kable_styling() %>%
   scroll_box(width = "500px", height = "200px")
 
+d_filtered %>%
+  group_by(tag,observedby_person_id) %>%
+  summarize(var_intensity = var(intensity,na.rm = TRUE)) %>%
+  filter(var_intensity != 0) %>%
+  kable(digits = 2,
+        col.names = c("Tag ID","Person ID","Intensity Variance")) %>%
+  kable_styling() %>%
+  scroll_box(width = "500px", height = "200px")
 
 d_filtered %>%
   group_by(common_name,month) %>%
