@@ -87,7 +87,7 @@ d_filtered %>%
   ggplot(aes(x = month, y = mean_intensity)) +
   geom_line() + facet_wrap(~ common_name)
 
-#Variance and mean intensity per tree id
+#Variance and mean intensity per tree id 
 d_filtered %>%
   group_by(tag) %>%
   summarize(var_intensity = var(intensity,na.rm = TRUE),
@@ -122,10 +122,11 @@ d_filtered %>%
   group_by(species) %>%
   count(phenophase_description)
 
-ggplot(d_filtered, aes(x = species, fill = species)) +
+ggplot(d_filtered, aes(x = paste(genus,species))) +
   geom_bar(position = "dodge") +
   ylab("Count of Observations") +
-  xlab("Species")
+  xlab("Species") +
+  coord_flip()
 
 ggplot(d_filtered, aes(x = month, fill = species)) +
   geom_bar(position = "fill") +
