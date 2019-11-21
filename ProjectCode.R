@@ -12,6 +12,9 @@ library(leafpop)
 library(knitr)
 library(broom)
 library(data.table)
+library(DT)
+library(widgetframe)
+library(kableExtra)
 #npn_groups() %>%
 #filter(grepl("Buffalo",network_name)) <- Identifies network ID
 
@@ -76,9 +79,10 @@ d_filtered %>%
 #Data Exploration
 table <- prop.table(table(d$common_name)) * 100
 table %>%
-  kable(col.names = c("Common Name","Percentage of Observations"))
-table(droplevels(as.factor(d_filtered$phenophase_description)),
-      d_filtered$common_name)
+  kable(col.names = c("Common Name","Percentage of Observations"),
+        digits = 2) %>%
+  kable_styling(full_width = FALSE, fixed_thead = TRUE) %>%
+  scroll_box(width = "500px", height = "200px", fixed_thead = TRUE)
 
 d_filtered %>%
   group_by(common_name, month) %>%
@@ -93,9 +97,10 @@ d_filtered %>%
   summarize(var_intensity = var(intensity,na.rm = TRUE),
             mean_intensity = mean(intensity, na.rm = TRUE)) %>%
   filter(var_intensity != 0) %>%
-  top_n(5) %>%
-  kable(digits = 2, col.names = c("Tag ID","Intensity Variance","Intensity Average")) %>%
-  data.table() %>%
+  kable(digits = 2,
+        col.names = c("Tag ID","Intensity Variance","Intensity Average")) %>%
+  kable_styling() %>%
+  scroll_box(width = "500px", height = "200px")
 
 
 d_filtered %>%
