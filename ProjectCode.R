@@ -68,7 +68,8 @@ d_filtered %>%
 
 
 d_filtered %>%
-  ggplot(aes(x = date, y = intensity, color = leaf_drop)) +
+  filter(month >= 8) %>%
+  ggplot(aes(x = month, y = intensity, color = leaf_drop)) +
   geom_point() +
   geom_smooth() +
   facet_wrap(~ common_name)
