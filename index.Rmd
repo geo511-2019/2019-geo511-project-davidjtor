@@ -6,15 +6,16 @@ code_folding: hide
 ---
 
 # Introduction
-For my project, I'm looking at ecological data, specifically about a variety of different tree species. The data is collected from an undergraduate ecology course about a variety of tree species around campus. This data contributes to an overarching phenological problem regarding carbon emissions and the rate at which leaves fall off the tree. I'm building some graphs that show some interesting aspects of trees and their leaves. I'm also in the process of building an interactive map that shows the species and data about that specific tree. 
+For my project, I'm looking at ecological data, specifically about a variety of different tree species. The data is collected from an undergraduate ecology course about a variety of tree species around campus. This data contributes to an overarching phenological problem regarding carbon emissions and the rate at which leaves fall off the tree. I'm building some graphs that show some interesting aspects of trees and their leaves. Since the National Phenology Network uses data provided from Citizen Scientists, I'm going to look at the implications of using their data for analysis while also doing some analysis regarding the different species of trees around campus. 
 
 # Materials and methods
 
 Narrative and most code will go here.  Describe what you are doing and show how to do it (with code).
 
 * Install/Download the appropriate libraries
-* Retrieve the data that is stored online.
+* Retrieve the data that is stored online using UB's network ID.
 * Pull the two data sources together and perform some exploratory analysis.
+* Create some tables that can be used for analysis.
 * Generate some graphs that show some interesting finds about the data.
 
 Load all packages (you may need to install some packages):
@@ -42,7 +43,8 @@ knitr::opts_chunk$set(cache=TRUE)  ##cache the results for quick compiling
 ```{r, warning=FALSE, message=FALSE}
 d=npn_download_status_data("Testing",
                            years=c('2019'),
-                           additional_fields=list("Plant_Nickname"), 
+                           additional_fields=list("Plant_Nickname",
+                                                  "ObservedBy_Person_ID"),
                            network_ids=c(891))
 
 d_filtered <- d %>%
@@ -148,7 +150,7 @@ d_filtered %>%
   geom_smooth() +
   facet_wrap(~ common_name)
 
-ggplot(d_filtered, aes(x = species, fill = species)) +
+ggplot(d_filtered, aes(x = common_name, fill = common_name)) +
   geom_bar(position = "dodge") +
   ylab("Count of Observations") +
   xlab("Species") +
@@ -168,7 +170,7 @@ d_filtered %>%
 ```
 
 # Conclusions
-
+In the data, we are able to see that in Citizen Science, there can be a lot of variability in observations. It's interesting to see how data is collected from other individuals and how it contributes to a bigger picture. We can see from the graphs that although most leaves typically drop around October, some trees don't drop their leaves until much later in the year. Citizen Science is very useful in terms of getting young scientists involved and helping to contribute data to solving a bigger problem. One of the main drawbacks of using citizen science data is the large variation in observations as shown in the table above. Even looking at one particular tag, we can see the huge amount of variation in observations between the different participants. 
 
 
 # References

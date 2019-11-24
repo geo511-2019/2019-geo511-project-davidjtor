@@ -114,6 +114,17 @@ d_filtered %>%
   scroll_box(width = "500px", height = "200px")
 
 d_filtered %>%
+  group_by(observedby_person_id) %>%
+  count() %>%
+  arrange(desc(n)) %>%
+  kable(digits = 2,
+        col.names = c("Person ID","Count of Observations")) %>%
+  kable_styling() %>%
+  scroll_box(width = "500px", height = "200px")
+
+
+
+d_filtered %>%
   group_by(common_name,month) %>%
   summarize(var_intensity = var(intensity,na.rm = TRUE),
             mean_intensity = mean(intensity, na.rm = TRUE)) %>%
@@ -240,4 +251,23 @@ leaflet(trees) %>%
   addAwesomeMarkers(~lon, ~lat,
                     icon=icons,
                     label = paste("Tag:", trees$tag, "|",
-                    "Species:", trees$common_name))
+                    "Species:", trees$common_name)) %>%
+  addPopupGraphs(list(tags), group = "tag")
+
+tags <- d_filtered %>%
+  filter(month >= 8) %>%
+  ggplot(aes(x = month, y = intensity)) +
+  geom_line()
+
+addPopupGraphs = function(map, graph, group, width = 300, height = 300) {
+  
+  imgs = lapply(seq_along(graph), function(i) {
+    fl = tempfile(fileext = ".png")
+    grDevices::png(filename = fl, width = width, height = height, units = "px")
+    print(graph[[i]])
+    dev.off()
+    return(fl)
+  })}
+  
+  addPopupImages(map, imgs, group)
+}
