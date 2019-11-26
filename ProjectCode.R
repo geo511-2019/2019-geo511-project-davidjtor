@@ -69,11 +69,24 @@ d_filtered %>%
 
 
 d_filtered %>%
-  filter(month >= 8) %>%
-  ggplot(aes(x = month, y = intensity, color = leaf_drop)) +
-  geom_point() +
-  geom_smooth() +
+  filter(month >= 9, !is.na(leaf_drop)) %>%
+  ggplot(aes(x = month, fill = leaf_drop)) +
+  geom_bar() +
   facet_wrap(~ common_name)
+
+d_filtered %>%
+  filter(phenophase_description=="Leaves",
+         between(month,9,11)) %>% 
+  group_by(observedby_person_id, month)%>%
+  summarize(total_obs=n()) %>% 
+  #left_join(select(ungroup(d_obs),ubit,percent),by="ubit") %>% 
+  #  ggplot(aes(x=week,y=reorder(ubit,percent),fill=total_obs)) +
+  ggplot(aes(x=as.factor(month),y=as.character(observedby_person_id),fill=total_obs)) +
+  #facet_wrap(~group,scales="free_y")+
+  geom_tile()+
+  scale_fill_viridis_c()+
+  ylab("Observation ID") %>%
+ 
 
 d_filtered %>%
   group_by(common_name) %>%
