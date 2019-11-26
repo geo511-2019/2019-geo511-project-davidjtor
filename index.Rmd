@@ -22,6 +22,8 @@ Load all packages (you may need to install some packages):
 
 ```{r, message=F, warning=F, echo=TRUE}
 library(tidyverse)
+library(devtools)
+devtools::install_github("usa-npn/rnpn")
 library(rnpn)
 library(dplyr)
 library(lubridate)
