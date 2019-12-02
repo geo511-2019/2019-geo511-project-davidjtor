@@ -17,7 +17,7 @@
 
 <script src="site_libs/jquery-1.12.4/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/darkly.min.css" rel="stylesheet" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
@@ -25,10 +25,11 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
-<script src="site_libs/htmlwidgets-1.3/htmlwidgets.js"></script>
+<script src="site_libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
 <link href="site_libs/leaflet-1.3.1/leaflet.css" rel="stylesheet" />
 <script src="site_libs/leaflet-1.3.1/leaflet.js"></script>
 <link href="site_libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
@@ -36,6 +37,9 @@
 <script src="site_libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
 <link href="site_libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet" />
 <script src="site_libs/leaflet-binding-2.0.2/leaflet.js"></script>
+<link href="site_libs/leaflet-awesomemarkers-2.0.3/leaflet.awesome-markers.css" rel="stylesheet" />
+<script src="site_libs/leaflet-awesomemarkers-2.0.3/leaflet.awesome-markers.min.js"></script>
+<link href="site_libs/ionicons-2.0.1/ionicons.min.css" rel="stylesheet" />
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -259,6 +263,9 @@ $(document).ready(function () {
 </style>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
 
 
 
@@ -365,10 +372,18 @@ div.tocify {
 
 <div class="fluid-row" id="header">
 
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
 
 
 <h1 class="title toc-ignore">GEO 511: Spatial Data Science Project</h1>
-<h3 class="subtitle">Subtitle here if desired</h3>
+<h3 class="subtitle">Contributing to the National Phenology Network</h3>
 <h4 class="author">David Torgerson</h4>
 
 </div>
@@ -376,269 +391,7079 @@ div.tocify {
 
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>My really awesome and complete introduction will go here.</p>
+<p>For my project, I’m looking at ecological data, specifically about a variety of different tree species. The data is collected from an undergraduate ecology course about a variety of tree species around campus. This data contributes to an overarching phenological problem regarding carbon emissions and the rate at which leaves fall off the tree. I’m building some graphs that show some interesting aspects of trees and their leaves. Since the National Phenology Network uses data provided from Citizen Scientists, I’m going to look at the implications of using their data for analysis while also doing some analysis regarding the different species of trees around campus.</p>
 </div>
 <div id="materials-and-methods" class="section level1">
 <h1>Materials and methods</h1>
-<p>Narrative and most code will go here. Describe what you are doing and show how to do it (with code).</p>
-<p>You can do bullets like this:</p>
-<ul>
-<li>The first most important thing</li>
-<li>The second most important thing</li>
-<li>The third most important thing</li>
-</ul>
-<p>You can do numbers like this:</p>
-<ol style="list-style-type: decimal">
-<li>The first most important thing</li>
-<li>The second most important thing</li>
-<li>The third most important thing</li>
-</ol>
-<p>See <a href="http://rmarkdown.rstudio.com/">http://rmarkdown.rstudio.com/</a> for all the amazing things you can do.</p>
-<p>Here’s my first code chunk.</p>
-<pre class="r"><code>1+2</code></pre>
-<pre><code>## [1] 3</code></pre>
-<p>Load any required packages in a code chunk (you may need to install some packages):</p>
+<p>Collecting the data: * Students were assigned up to four designated trees. * Each tree was identified and assigned a tag. * Students had to be make 4 observations a week (one for each tree) * Students then input data into app which is then recorded in the database.</p>
+<p>Running the analysis: * Install/Download the appropriate libraries * Retrieve the data that is stored online using UB’s network ID. * Pull the two data sources together and perform some exploratory analysis. * Create some tables that can be used for analysis. * Generate some graphs that show some interesting finds about the data.</p>
+<p>Load all packages (you may need to install some packages):</p>
 <pre class="r"><code>library(tidyverse)
+library(devtools)
+#devtools::install_github(&quot;usa-npn/rnpn&quot;)
+library(rnpn)
+library(dplyr)
+library(lubridate)
 library(leaflet)
+library(readxl)
+library(sf)
+library(spData)
+library(ggmap)
 library(kableExtra)
-knitr::opts_chunk$set(cache=TRUE)  # cache the results for quick compiling</code></pre>
+library(knitr)
+library(data.table)
+library(broom)
+library(widgetframe)
+library(DT)
+knitr::opts_chunk$set(cache=TRUE)  ##cache the results for quick compiling</code></pre>
 <div id="download-and-clean-all-required-data" class="section level2">
 <h2>Download and clean all required data</h2>
-<pre class="r"><code>n=20
-data=data.frame(x=runif(n,-180,180),
-                y=runif(n,-60,60),
-                size = runif(n, 5, 20),
-                category = factor(
-                  sample(letters[1:5], n, replace = TRUE)
-                  ),
-                value = rnorm(n))</code></pre>
-<pre class="r"><code>data %&gt;% 
-  slice(1:10) %&gt;% #show only 1:n rows
-  kable(digits=2,align=&quot;c&quot;)%&gt;% #make table and round to two digits
-  kable_styling(bootstrap_options = 
-                  c(&quot;striped&quot;, &quot;hover&quot;, &quot;condensed&quot;, &quot;responsive&quot;)) #apply other formatting</code></pre>
-<table class="table table-striped table-hover table-condensed table-responsive" style="margin-left: auto; margin-right: auto;">
+<pre class="r"><code>d=npn_download_status_data(&quot;Testing&quot;,
+                           years=c(&#39;2019&#39;),
+                           additional_fields=list(&quot;Plant_Nickname&quot;,
+                                                  &quot;ObservedBy_Person_ID&quot;),
+                           network_ids=c(891))
+
+d_filtered &lt;- d %&gt;%
+  rename(&quot;a&quot;=&quot;intensity_value&quot;) %&gt;% 
+  mutate(
+    date = as.Date(observation_date),
+    month = month(date),
+    tag = as.numeric(substr(plant_nickname,1,3)),
+    intensity=case_when(
+      a == &quot;Less than 5%&quot; ~ 2.5,
+      a == &quot;Less than 25%&quot; ~ 20,
+      a == &quot;5-24%&quot; ~ 14.5,
+      a == &quot;25-49%&quot; ~ 37,
+      a == &quot;50-74%&quot; ~ 62,
+      a == &quot;75-94%&quot; ~ 84.5,
+      a == &quot;95% or more&quot;  ~ 97.5,
+      a == &quot;Less than 3&quot;  ~ 2,  
+      a == &quot;3 to 10&quot; ~ 6.5,
+      a == &quot;11 to 100&quot; ~ 50,
+      a == &quot;101 to 1,000&quot; ~ 500,
+      a == &quot;1,001 to 10,000&quot; ~ 5000,
+      a == &quot;Little&quot; ~ 5,
+      a == &quot;Some&quot; ~ 3,  
+      TRUE ~ as.numeric(NA)
+    ))%&gt;%
+  filter(phenophase_description%in%c(&quot;Leaves&quot;,&quot;Colored leaves&quot;))
+
+d_filtered &lt;- d_filtered %&gt;%
+  mutate(leaf_drop = case_when(
+    intensity &lt; 50 ~ &quot;Dropped&quot;,
+    intensity &gt;= 50 ~ &quot;Not Dropped&quot;
+  ))
+
+trees &lt;- read_csv(&quot;trees.csv&quot;)
+
+trees &lt;- trees %&gt;% 
+  mutate(color = case_when (
+    common_name == &quot;Red Oak&quot; ~ &quot;red&quot;,
+    common_name == &quot;Black Oak&quot; ~ &quot;black&quot;,
+    common_name == &quot;Silver Maple&quot; ~ &quot;darkblue&quot;,
+    common_name == &quot;Red Maple&quot; ~ &quot;orange&quot;,
+    common_name == &quot;Black Locust&quot; ~ &quot;purple&quot;,
+    common_name == &quot;Sugar Maple&quot; ~ &quot;darkpurple&quot;,
+    common_name == &quot;Staghorn Sumac&quot; ~ &quot;blue&quot;,
+    common_name == &quot;Eastern Cottonwood&quot; ~ &quot;beige&quot;,
+    common_name == &quot;Apple&quot; ~ &quot;yellow&quot;,
+    common_name == &quot;American Basswood&quot; ~ &quot;pink&quot;,
+    common_name == &quot;River Birch&quot; ~ &quot;lightred&quot;,
+    common_name == &quot;White Birch&quot; ~ &quot;cadetblue&quot;,
+    common_name == &quot;Ginkgo&quot; ~ &quot;lightgray&quot;
+  ))</code></pre>
+</div>
+</div>
+<div id="exploratory-data-analysis" class="section level1">
+<h1>Exploratory Data Analysis</h1>
+<pre class="r"><code>table &lt;- prop.table(table(d$common_name)) * 100
+table %&gt;%
+  kable(col.names = c(&quot;Common Name&quot;,&quot;Percentage of Observations&quot;), digits = 2) %&gt;% kable_styling(full_width = FALSE, fixed_thead = TRUE) %&gt;%
+  scroll_box(width = &quot;500px&quot;, height = &quot;200px&quot;, fixed_thead = TRUE)</code></pre>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:200px; overflow-x: scroll; width:500px; ">
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
-<th style="text-align:center;">
-x
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;position: sticky; top:0; background-color: #FFFFFF;">
+Common Name
 </th>
-<th style="text-align:center;">
-y
-</th>
-<th style="text-align:center;">
-size
-</th>
-<th style="text-align:center;">
-category
-</th>
-<th style="text-align:center;">
-value
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;position: sticky; top:0; background-color: #FFFFFF;">
+Percentage of Observations
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:center;">
--152.68
+<td style="text-align:left;">
+American basswood
 </td>
-<td style="text-align:center;">
--16.16
-</td>
-<td style="text-align:center;">
-5.83
-</td>
-<td style="text-align:center;">
-b
-</td>
-<td style="text-align:center;">
--1.10
+<td style="text-align:right;">
+8.54
 </td>
 </tr>
 <tr>
-<td style="text-align:center;">
--65.58
+<td style="text-align:left;">
+apple
 </td>
-<td style="text-align:center;">
--5.28
-</td>
-<td style="text-align:center;">
-17.02
-</td>
-<td style="text-align:center;">
-a
-</td>
-<td style="text-align:center;">
-0.99
+<td style="text-align:right;">
+7.44
 </td>
 </tr>
 <tr>
-<td style="text-align:center;">
-2.87
+<td style="text-align:left;">
+black locust
 </td>
-<td style="text-align:center;">
--3.61
-</td>
-<td style="text-align:center;">
-12.52
-</td>
-<td style="text-align:center;">
-a
-</td>
-<td style="text-align:center;">
--1.58
+<td style="text-align:right;">
+8.90
 </td>
 </tr>
 <tr>
-<td style="text-align:center;">
--80.98
+<td style="text-align:left;">
+black oak
 </td>
-<td style="text-align:center;">
-24.00
-</td>
-<td style="text-align:center;">
-12.81
-</td>
-<td style="text-align:center;">
-e
-</td>
-<td style="text-align:center;">
-1.08
+<td style="text-align:right;">
+5.21
 </td>
 </tr>
 <tr>
-<td style="text-align:center;">
--64.20
+<td style="text-align:left;">
+Canada goose
 </td>
-<td style="text-align:center;">
--14.01
-</td>
-<td style="text-align:center;">
-13.21
-</td>
-<td style="text-align:center;">
-e
-</td>
-<td style="text-align:center;">
--0.92
+<td style="text-align:right;">
+0.57
 </td>
 </tr>
 <tr>
-<td style="text-align:center;">
--146.99
+<td style="text-align:left;">
+eastern cottonwood
 </td>
-<td style="text-align:center;">
--10.65
-</td>
-<td style="text-align:center;">
-5.13
-</td>
-<td style="text-align:center;">
-c
-</td>
-<td style="text-align:center;">
--0.51
+<td style="text-align:right;">
+3.07
 </td>
 </tr>
 <tr>
-<td style="text-align:center;">
-35.85
+<td style="text-align:left;">
+maidenhair tree
 </td>
-<td style="text-align:center;">
--43.70
-</td>
-<td style="text-align:center;">
-7.52
-</td>
-<td style="text-align:center;">
-e
-</td>
-<td style="text-align:center;">
--1.42
+<td style="text-align:right;">
+10.91
 </td>
 </tr>
 <tr>
-<td style="text-align:center;">
-10.60
+<td style="text-align:left;">
+northern red oak
 </td>
-<td style="text-align:center;">
-56.55
-</td>
-<td style="text-align:center;">
-12.51
-</td>
-<td style="text-align:center;">
-d
-</td>
-<td style="text-align:center;">
-0.28
+<td style="text-align:right;">
+8.27
 </td>
 </tr>
 <tr>
-<td style="text-align:center;">
--155.44
+<td style="text-align:left;">
+paper birch
 </td>
-<td style="text-align:center;">
-2.99
-</td>
-<td style="text-align:center;">
-16.75
-</td>
-<td style="text-align:center;">
-e
-</td>
-<td style="text-align:center;">
--0.33
+<td style="text-align:right;">
+6.52
 </td>
 </tr>
 <tr>
-<td style="text-align:center;">
--139.57
+<td style="text-align:left;">
+red maple
 </td>
-<td style="text-align:center;">
--52.38
+<td style="text-align:right;">
+8.28
 </td>
-<td style="text-align:center;">
-13.15
+</tr>
+<tr>
+<td style="text-align:left;">
+river birch
 </td>
-<td style="text-align:center;">
-e
+<td style="text-align:right;">
+9.66
 </td>
-<td style="text-align:center;">
-0.78
+</tr>
+<tr>
+<td style="text-align:left;">
+silver maple
+</td>
+<td style="text-align:right;">
+3.57
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+staghorn sumac
+</td>
+<td style="text-align:right;">
+7.55
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sugar maple
+</td>
+<td style="text-align:right;">
+11.50
 </td>
 </tr>
 </tbody>
 </table>
-<p>Add any additional processing steps here.</p>
+</div>
+<pre class="r"><code>d_filtered %&gt;%
+  group_by(common_name, month) %&gt;%
+  summarize(var_intensity = var(intensity,na.rm = TRUE),
+            mean_intensity = mean(intensity, na.rm = TRUE)) %&gt;%
+  filter(var_intensity != 0) %&gt;%
+  kable(digits = 2, col.names = c(&quot;Name&quot;,&quot;Month&quot;,&quot;Intensity Variance&quot;,&quot;Intensity Average&quot;)) %&gt;% kable_styling() %&gt;% scroll_box(width = &quot;500px&quot;, height = &quot;200px&quot;)</code></pre>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:200px; overflow-x: scroll; width:500px; ">
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Name
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+Month
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+Intensity Variance
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+Intensity Average
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+American basswood
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1354.79
+</td>
+<td style="text-align:right;">
+51.69
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+American basswood
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+959.07
+</td>
+<td style="text-align:right;">
+53.56
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+American basswood
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+1574.28
+</td>
+<td style="text-align:right;">
+46.22
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+apple
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1153.33
+</td>
+<td style="text-align:right;">
+53.44
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+apple
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+891.99
+</td>
+<td style="text-align:right;">
+42.52
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+apple
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+1189.74
+</td>
+<td style="text-align:right;">
+39.28
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+black locust
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1110.18
+</td>
+<td style="text-align:right;">
+62.58
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+black locust
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+1051.78
+</td>
+<td style="text-align:right;">
+50.94
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+black locust
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+1273.13
+</td>
+<td style="text-align:right;">
+30.57
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+black oak
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1698.06
+</td>
+<td style="text-align:right;">
+51.66
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+black oak
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+1117.18
+</td>
+<td style="text-align:right;">
+48.63
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+black oak
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+1014.96
+</td>
+<td style="text-align:right;">
+63.86
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+eastern cottonwood
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1192.67
+</td>
+<td style="text-align:right;">
+48.09
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+eastern cottonwood
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+603.41
+</td>
+<td style="text-align:right;">
+40.77
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+eastern cottonwood
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+1633.33
+</td>
+<td style="text-align:right;">
+49.50
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+maidenhair tree
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1483.71
+</td>
+<td style="text-align:right;">
+64.64
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+maidenhair tree
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+1041.16
+</td>
+<td style="text-align:right;">
+56.22
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+maidenhair tree
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+1426.18
+</td>
+<td style="text-align:right;">
+49.42
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+northern red oak
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1725.51
+</td>
+<td style="text-align:right;">
+55.33
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+northern red oak
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+1043.45
+</td>
+<td style="text-align:right;">
+52.81
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+northern red oak
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+1100.92
+</td>
+<td style="text-align:right;">
+59.44
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+paper birch
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1382.37
+</td>
+<td style="text-align:right;">
+56.55
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+paper birch
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+862.80
+</td>
+<td style="text-align:right;">
+51.46
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+paper birch
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+1453.00
+</td>
+<td style="text-align:right;">
+51.68
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+red maple
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1223.27
+</td>
+<td style="text-align:right;">
+54.82
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+red maple
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+834.25
+</td>
+<td style="text-align:right;">
+60.34
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+red maple
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+1310.82
+</td>
+<td style="text-align:right;">
+38.51
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+river birch
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+126.56
+</td>
+<td style="text-align:right;">
+31.38
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+river birch
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1240.32
+</td>
+<td style="text-align:right;">
+63.19
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+river birch
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+1007.42
+</td>
+<td style="text-align:right;">
+54.76
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+river birch
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+1156.11
+</td>
+<td style="text-align:right;">
+52.14
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silver maple
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1222.62
+</td>
+<td style="text-align:right;">
+52.24
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silver maple
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+849.96
+</td>
+<td style="text-align:right;">
+50.42
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silver maple
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+1209.10
+</td>
+<td style="text-align:right;">
+38.83
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+staghorn sumac
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1047.50
+</td>
+<td style="text-align:right;">
+45.44
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+staghorn sumac
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+767.07
+</td>
+<td style="text-align:right;">
+51.07
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+staghorn sumac
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+1545.31
+</td>
+<td style="text-align:right;">
+48.01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sugar maple
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1562.26
+</td>
+<td style="text-align:right;">
+56.89
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sugar maple
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+997.16
+</td>
+<td style="text-align:right;">
+56.74
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sugar maple
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+1272.38
+</td>
+<td style="text-align:right;">
+52.50
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<pre class="r"><code>d_filtered %&gt;%
+  group_by(tag,observedby_person_id) %&gt;%
+  summarize(var_intensity = var(intensity,na.rm = TRUE)) %&gt;%
+  filter(var_intensity != 0) %&gt;%
+  kable(digits = 2,
+        col.names = c(&quot;Tag ID&quot;,&quot;Person ID&quot;,&quot;Intensity Variance&quot;)) %&gt;%
+  kable_styling() %&gt;%
+  scroll_box(width = &quot;500px&quot;, height = &quot;200px&quot;)</code></pre>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:200px; overflow-x: scroll; width:500px; ">
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+Tag ID
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+Person ID
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+Intensity Variance
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+101
+</td>
+<td style="text-align:right;">
+49450
+</td>
+<td style="text-align:right;">
+4512.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+101
+</td>
+<td style="text-align:right;">
+49468
+</td>
+<td style="text-align:right;">
+1622.22
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+101
+</td>
+<td style="text-align:right;">
+49545
+</td>
+<td style="text-align:right;">
+1534.74
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+101
+</td>
+<td style="text-align:right;">
+49549
+</td>
+<td style="text-align:right;">
+1634.85
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+101
+</td>
+<td style="text-align:right;">
+49606
+</td>
+<td style="text-align:right;">
+852.84
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+101
+</td>
+<td style="text-align:right;">
+49608
+</td>
+<td style="text-align:right;">
+1594.40
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+101
+</td>
+<td style="text-align:right;">
+49613
+</td>
+<td style="text-align:right;">
+4512.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+101
+</td>
+<td style="text-align:right;">
+49616
+</td>
+<td style="text-align:right;">
+1128.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+101
+</td>
+<td style="text-align:right;">
+49627
+</td>
+<td style="text-align:right;">
+3362.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+101
+</td>
+<td style="text-align:right;">
+49657
+</td>
+<td style="text-align:right;">
+948.91
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+101
+</td>
+<td style="text-align:right;">
+49661
+</td>
+<td style="text-align:right;">
+1830.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+101
+</td>
+<td style="text-align:right;">
+49688
+</td>
+<td style="text-align:right;">
+1242.60
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+101
+</td>
+<td style="text-align:right;">
+49689
+</td>
+<td style="text-align:right;">
+4512.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+101
+</td>
+<td style="text-align:right;">
+49703
+</td>
+<td style="text-align:right;">
+84.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+101
+</td>
+<td style="text-align:right;">
+49971
+</td>
+<td style="text-align:right;">
+4512.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+101
+</td>
+<td style="text-align:right;">
+50044
+</td>
+<td style="text-align:right;">
+2406.67
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+102
+</td>
+<td style="text-align:right;">
+49450
+</td>
+<td style="text-align:right;">
+4512.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+102
+</td>
+<td style="text-align:right;">
+49468
+</td>
+<td style="text-align:right;">
+1658.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+102
+</td>
+<td style="text-align:right;">
+49545
+</td>
+<td style="text-align:right;">
+1501.56
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+102
+</td>
+<td style="text-align:right;">
+49549
+</td>
+<td style="text-align:right;">
+952.88
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+102
+</td>
+<td style="text-align:right;">
+49606
+</td>
+<td style="text-align:right;">
+876.05
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+102
+</td>
+<td style="text-align:right;">
+49657
+</td>
+<td style="text-align:right;">
+1018.89
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+102
+</td>
+<td style="text-align:right;">
+49683
+</td>
+<td style="text-align:right;">
+2450.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+102
+</td>
+<td style="text-align:right;">
+49688
+</td>
+<td style="text-align:right;">
+1322.38
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+102
+</td>
+<td style="text-align:right;">
+50044
+</td>
+<td style="text-align:right;">
+1923.29
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+103
+</td>
+<td style="text-align:right;">
+49450
+</td>
+<td style="text-align:right;">
+4512.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+103
+</td>
+<td style="text-align:right;">
+49468
+</td>
+<td style="text-align:right;">
+1656.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+103
+</td>
+<td style="text-align:right;">
+49545
+</td>
+<td style="text-align:right;">
+1573.71
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+103
+</td>
+<td style="text-align:right;">
+49549
+</td>
+<td style="text-align:right;">
+1093.09
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+103
+</td>
+<td style="text-align:right;">
+49606
+</td>
+<td style="text-align:right;">
+404.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+103
+</td>
+<td style="text-align:right;">
+49657
+</td>
+<td style="text-align:right;">
+1231.78
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+103
+</td>
+<td style="text-align:right;">
+49688
+</td>
+<td style="text-align:right;">
+1241.16
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+103
+</td>
+<td style="text-align:right;">
+50044
+</td>
+<td style="text-align:right;">
+1966.41
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+104
+</td>
+<td style="text-align:right;">
+49549
+</td>
+<td style="text-align:right;">
+630.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+104
+</td>
+<td style="text-align:right;">
+49579
+</td>
+<td style="text-align:right;">
+1197.80
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+104
+</td>
+<td style="text-align:right;">
+49601
+</td>
+<td style="text-align:right;">
+481.07
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+104
+</td>
+<td style="text-align:right;">
+49619
+</td>
+<td style="text-align:right;">
+1394.13
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+104
+</td>
+<td style="text-align:right;">
+49652
+</td>
+<td style="text-align:right;">
+2296.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+104
+</td>
+<td style="text-align:right;">
+49683
+</td>
+<td style="text-align:right;">
+625.81
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+105
+</td>
+<td style="text-align:right;">
+49450
+</td>
+<td style="text-align:right;">
+4512.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+105
+</td>
+<td style="text-align:right;">
+49468
+</td>
+<td style="text-align:right;">
+1449.59
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+105
+</td>
+<td style="text-align:right;">
+49545
+</td>
+<td style="text-align:right;">
+1589.19
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+105
+</td>
+<td style="text-align:right;">
+49549
+</td>
+<td style="text-align:right;">
+1172.16
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+105
+</td>
+<td style="text-align:right;">
+49606
+</td>
+<td style="text-align:right;">
+1320.57
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+105
+</td>
+<td style="text-align:right;">
+49657
+</td>
+<td style="text-align:right;">
+1085.15
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+105
+</td>
+<td style="text-align:right;">
+49688
+</td>
+<td style="text-align:right;">
+1341.63
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+105
+</td>
+<td style="text-align:right;">
+50044
+</td>
+<td style="text-align:right;">
+2097.57
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+106
+</td>
+<td style="text-align:right;">
+49579
+</td>
+<td style="text-align:right;">
+724.42
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+106
+</td>
+<td style="text-align:right;">
+49601
+</td>
+<td style="text-align:right;">
+602.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+106
+</td>
+<td style="text-align:right;">
+49619
+</td>
+<td style="text-align:right;">
+1745.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+106
+</td>
+<td style="text-align:right;">
+49652
+</td>
+<td style="text-align:right;">
+3008.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+106
+</td>
+<td style="text-align:right;">
+49683
+</td>
+<td style="text-align:right;">
+722.10
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+107
+</td>
+<td style="text-align:right;">
+49546
+</td>
+<td style="text-align:right;">
+1221.01
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+107
+</td>
+<td style="text-align:right;">
+49614
+</td>
+<td style="text-align:right;">
+1017.27
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+107
+</td>
+<td style="text-align:right;">
+49679
+</td>
+<td style="text-align:right;">
+1570.79
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+107
+</td>
+<td style="text-align:right;">
+49692
+</td>
+<td style="text-align:right;">
+1812.46
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+107
+</td>
+<td style="text-align:right;">
+49710
+</td>
+<td style="text-align:right;">
+1133.51
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+107
+</td>
+<td style="text-align:right;">
+49873
+</td>
+<td style="text-align:right;">
+253.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+108
+</td>
+<td style="text-align:right;">
+49579
+</td>
+<td style="text-align:right;">
+929.17
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+108
+</td>
+<td style="text-align:right;">
+49601
+</td>
+<td style="text-align:right;">
+398.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+108
+</td>
+<td style="text-align:right;">
+49619
+</td>
+<td style="text-align:right;">
+1568.55
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+108
+</td>
+<td style="text-align:right;">
+49652
+</td>
+<td style="text-align:right;">
+2296.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+108
+</td>
+<td style="text-align:right;">
+49683
+</td>
+<td style="text-align:right;">
+966.56
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+109
+</td>
+<td style="text-align:right;">
+49546
+</td>
+<td style="text-align:right;">
+1221.01
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+109
+</td>
+<td style="text-align:right;">
+49614
+</td>
+<td style="text-align:right;">
+1159.26
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+109
+</td>
+<td style="text-align:right;">
+49679
+</td>
+<td style="text-align:right;">
+1490.40
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+109
+</td>
+<td style="text-align:right;">
+49692
+</td>
+<td style="text-align:right;">
+1750.80
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+109
+</td>
+<td style="text-align:right;">
+49710
+</td>
+<td style="text-align:right;">
+799.75
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+109
+</td>
+<td style="text-align:right;">
+49873
+</td>
+<td style="text-align:right;">
+253.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:right;">
+49024
+</td>
+<td style="text-align:right;">
+3362.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:right;">
+49579
+</td>
+<td style="text-align:right;">
+876.22
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:right;">
+49601
+</td>
+<td style="text-align:right;">
+424.32
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:right;">
+49619
+</td>
+<td style="text-align:right;">
+1773.64
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:right;">
+49652
+</td>
+<td style="text-align:right;">
+3008.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:right;">
+49683
+</td>
+<td style="text-align:right;">
+945.40
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:right;">
+49692
+</td>
+<td style="text-align:right;">
+1128.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+111
+</td>
+<td style="text-align:right;">
+49546
+</td>
+<td style="text-align:right;">
+1389.85
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+111
+</td>
+<td style="text-align:right;">
+49614
+</td>
+<td style="text-align:right;">
+1197.88
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+111
+</td>
+<td style="text-align:right;">
+49653
+</td>
+<td style="text-align:right;">
+439.29
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+111
+</td>
+<td style="text-align:right;">
+49679
+</td>
+<td style="text-align:right;">
+1277.87
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+111
+</td>
+<td style="text-align:right;">
+49692
+</td>
+<td style="text-align:right;">
+1021.67
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+111
+</td>
+<td style="text-align:right;">
+49710
+</td>
+<td style="text-align:right;">
+746.05
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+112
+</td>
+<td style="text-align:right;">
+49483
+</td>
+<td style="text-align:right;">
+3362.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+112
+</td>
+<td style="text-align:right;">
+49546
+</td>
+<td style="text-align:right;">
+1389.85
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+112
+</td>
+<td style="text-align:right;">
+49614
+</td>
+<td style="text-align:right;">
+564.43
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+112
+</td>
+<td style="text-align:right;">
+49629
+</td>
+<td style="text-align:right;">
+630.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+112
+</td>
+<td style="text-align:right;">
+49679
+</td>
+<td style="text-align:right;">
+1144.02
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+112
+</td>
+<td style="text-align:right;">
+49692
+</td>
+<td style="text-align:right;">
+1982.20
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+112
+</td>
+<td style="text-align:right;">
+49710
+</td>
+<td style="text-align:right;">
+1005.20
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+112
+</td>
+<td style="text-align:right;">
+49873
+</td>
+<td style="text-align:right;">
+312.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+113
+</td>
+<td style="text-align:right;">
+49452
+</td>
+<td style="text-align:right;">
+784.68
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+113
+</td>
+<td style="text-align:right;">
+49491
+</td>
+<td style="text-align:right;">
+2450.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+113
+</td>
+<td style="text-align:right;">
+49558
+</td>
+<td style="text-align:right;">
+971.27
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+113
+</td>
+<td style="text-align:right;">
+49629
+</td>
+<td style="text-align:right;">
+1462.45
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+113
+</td>
+<td style="text-align:right;">
+49653
+</td>
+<td style="text-align:right;">
+707.38
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+113
+</td>
+<td style="text-align:right;">
+49695
+</td>
+<td style="text-align:right;">
+791.92
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+114
+</td>
+<td style="text-align:right;">
+49452
+</td>
+<td style="text-align:right;">
+1207.51
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+114
+</td>
+<td style="text-align:right;">
+49491
+</td>
+<td style="text-align:right;">
+3444.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+114
+</td>
+<td style="text-align:right;">
+49558
+</td>
+<td style="text-align:right;">
+1016.87
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+114
+</td>
+<td style="text-align:right;">
+49604
+</td>
+<td style="text-align:right;">
+168.75
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+114
+</td>
+<td style="text-align:right;">
+49629
+</td>
+<td style="text-align:right;">
+1417.62
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+114
+</td>
+<td style="text-align:right;">
+49653
+</td>
+<td style="text-align:right;">
+849.90
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+114
+</td>
+<td style="text-align:right;">
+49695
+</td>
+<td style="text-align:right;">
+1130.10
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+115
+</td>
+<td style="text-align:right;">
+49452
+</td>
+<td style="text-align:right;">
+891.34
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+115
+</td>
+<td style="text-align:right;">
+49491
+</td>
+<td style="text-align:right;">
+2450.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+115
+</td>
+<td style="text-align:right;">
+49558
+</td>
+<td style="text-align:right;">
+900.09
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+115
+</td>
+<td style="text-align:right;">
+49604
+</td>
+<td style="text-align:right;">
+253.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+115
+</td>
+<td style="text-align:right;">
+49629
+</td>
+<td style="text-align:right;">
+1432.71
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+115
+</td>
+<td style="text-align:right;">
+49653
+</td>
+<td style="text-align:right;">
+741.55
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+115
+</td>
+<td style="text-align:right;">
+49695
+</td>
+<td style="text-align:right;">
+902.65
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+116
+</td>
+<td style="text-align:right;">
+49438
+</td>
+<td style="text-align:right;">
+1042.37
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+116
+</td>
+<td style="text-align:right;">
+49470
+</td>
+<td style="text-align:right;">
+1882.57
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+116
+</td>
+<td style="text-align:right;">
+49566
+</td>
+<td style="text-align:right;">
+904.96
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+116
+</td>
+<td style="text-align:right;">
+49577
+</td>
+<td style="text-align:right;">
+4512.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+116
+</td>
+<td style="text-align:right;">
+49609
+</td>
+<td style="text-align:right;">
+282.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+116
+</td>
+<td style="text-align:right;">
+49627
+</td>
+<td style="text-align:right;">
+706.59
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+116
+</td>
+<td style="text-align:right;">
+49699
+</td>
+<td style="text-align:right;">
+678.08
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+116
+</td>
+<td style="text-align:right;">
+49835
+</td>
+<td style="text-align:right;">
+1162.22
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+117
+</td>
+<td style="text-align:right;">
+49438
+</td>
+<td style="text-align:right;">
+408.51
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+117
+</td>
+<td style="text-align:right;">
+49470
+</td>
+<td style="text-align:right;">
+1662.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+117
+</td>
+<td style="text-align:right;">
+49566
+</td>
+<td style="text-align:right;">
+871.91
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+117
+</td>
+<td style="text-align:right;">
+49577
+</td>
+<td style="text-align:right;">
+595.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+117
+</td>
+<td style="text-align:right;">
+49609
+</td>
+<td style="text-align:right;">
+101.25
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+117
+</td>
+<td style="text-align:right;">
+49627
+</td>
+<td style="text-align:right;">
+820.17
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+117
+</td>
+<td style="text-align:right;">
+49699
+</td>
+<td style="text-align:right;">
+830.55
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+117
+</td>
+<td style="text-align:right;">
+49835
+</td>
+<td style="text-align:right;">
+848.65
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+118
+</td>
+<td style="text-align:right;">
+49555
+</td>
+<td style="text-align:right;">
+1392.65
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+118
+</td>
+<td style="text-align:right;">
+49632
+</td>
+<td style="text-align:right;">
+1491.73
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+118
+</td>
+<td style="text-align:right;">
+49966
+</td>
+<td style="text-align:right;">
+84.38
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+119
+</td>
+<td style="text-align:right;">
+49555
+</td>
+<td style="text-align:right;">
+1589.81
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+119
+</td>
+<td style="text-align:right;">
+49632
+</td>
+<td style="text-align:right;">
+1679.80
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+119
+</td>
+<td style="text-align:right;">
+49966
+</td>
+<td style="text-align:right;">
+84.38
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+120
+</td>
+<td style="text-align:right;">
+49024
+</td>
+<td style="text-align:right;">
+4512.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+120
+</td>
+<td style="text-align:right;">
+49446
+</td>
+<td style="text-align:right;">
+1760.48
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+120
+</td>
+<td style="text-align:right;">
+49539
+</td>
+<td style="text-align:right;">
+1044.65
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+120
+</td>
+<td style="text-align:right;">
+49560
+</td>
+<td style="text-align:right;">
+1732.49
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+120
+</td>
+<td style="text-align:right;">
+49611
+</td>
+<td style="text-align:right;">
+771.73
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+120
+</td>
+<td style="text-align:right;">
+49620
+</td>
+<td style="text-align:right;">
+396.27
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+120
+</td>
+<td style="text-align:right;">
+49995
+</td>
+<td style="text-align:right;">
+2450.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+121
+</td>
+<td style="text-align:right;">
+49446
+</td>
+<td style="text-align:right;">
+894.49
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+121
+</td>
+<td style="text-align:right;">
+49539
+</td>
+<td style="text-align:right;">
+728.59
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+121
+</td>
+<td style="text-align:right;">
+49560
+</td>
+<td style="text-align:right;">
+1679.62
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+121
+</td>
+<td style="text-align:right;">
+49566
+</td>
+<td style="text-align:right;">
+3444.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+121
+</td>
+<td style="text-align:right;">
+49611
+</td>
+<td style="text-align:right;">
+696.57
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+121
+</td>
+<td style="text-align:right;">
+49620
+</td>
+<td style="text-align:right;">
+396.27
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+121
+</td>
+<td style="text-align:right;">
+49995
+</td>
+<td style="text-align:right;">
+253.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+122
+</td>
+<td style="text-align:right;">
+49438
+</td>
+<td style="text-align:right;">
+274.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+122
+</td>
+<td style="text-align:right;">
+49566
+</td>
+<td style="text-align:right;">
+1318.55
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+122
+</td>
+<td style="text-align:right;">
+49609
+</td>
+<td style="text-align:right;">
+2450.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+122
+</td>
+<td style="text-align:right;">
+49627
+</td>
+<td style="text-align:right;">
+1500.03
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+122
+</td>
+<td style="text-align:right;">
+49699
+</td>
+<td style="text-align:right;">
+1166.67
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+122
+</td>
+<td style="text-align:right;">
+49835
+</td>
+<td style="text-align:right;">
+1149.63
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+123
+</td>
+<td style="text-align:right;">
+49438
+</td>
+<td style="text-align:right;">
+322.77
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+123
+</td>
+<td style="text-align:right;">
+49566
+</td>
+<td style="text-align:right;">
+1359.67
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+123
+</td>
+<td style="text-align:right;">
+49609
+</td>
+<td style="text-align:right;">
+208.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+123
+</td>
+<td style="text-align:right;">
+49627
+</td>
+<td style="text-align:right;">
+1643.36
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+123
+</td>
+<td style="text-align:right;">
+49699
+</td>
+<td style="text-align:right;">
+987.20
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+123
+</td>
+<td style="text-align:right;">
+49835
+</td>
+<td style="text-align:right;">
+1087.40
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+124
+</td>
+<td style="text-align:right;">
+49555
+</td>
+<td style="text-align:right;">
+1259.77
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+124
+</td>
+<td style="text-align:right;">
+49632
+</td>
+<td style="text-align:right;">
+135.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+124
+</td>
+<td style="text-align:right;">
+49693
+</td>
+<td style="text-align:right;">
+4512.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+124
+</td>
+<td style="text-align:right;">
+49966
+</td>
+<td style="text-align:right;">
+84.38
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+125
+</td>
+<td style="text-align:right;">
+49555
+</td>
+<td style="text-align:right;">
+1208.28
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+125
+</td>
+<td style="text-align:right;">
+49632
+</td>
+<td style="text-align:right;">
+135.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+125
+</td>
+<td style="text-align:right;">
+49966
+</td>
+<td style="text-align:right;">
+132.04
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+126
+</td>
+<td style="text-align:right;">
+49446
+</td>
+<td style="text-align:right;">
+1203.27
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+126
+</td>
+<td style="text-align:right;">
+49539
+</td>
+<td style="text-align:right;">
+1386.34
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+126
+</td>
+<td style="text-align:right;">
+49560
+</td>
+<td style="text-align:right;">
+1705.79
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+126
+</td>
+<td style="text-align:right;">
+49611
+</td>
+<td style="text-align:right;">
+432.55
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+126
+</td>
+<td style="text-align:right;">
+49620
+</td>
+<td style="text-align:right;">
+1118.64
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+126
+</td>
+<td style="text-align:right;">
+49995
+</td>
+<td style="text-align:right;">
+2450.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+127
+</td>
+<td style="text-align:right;">
+49446
+</td>
+<td style="text-align:right;">
+1563.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+127
+</td>
+<td style="text-align:right;">
+49539
+</td>
+<td style="text-align:right;">
+1590.35
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+127
+</td>
+<td style="text-align:right;">
+49560
+</td>
+<td style="text-align:right;">
+1527.02
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+127
+</td>
+<td style="text-align:right;">
+49611
+</td>
+<td style="text-align:right;">
+195.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+127
+</td>
+<td style="text-align:right;">
+49620
+</td>
+<td style="text-align:right;">
+1175.77
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+127
+</td>
+<td style="text-align:right;">
+49995
+</td>
+<td style="text-align:right;">
+3362.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+128
+</td>
+<td style="text-align:right;">
+49447
+</td>
+<td style="text-align:right;">
+1080.24
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+128
+</td>
+<td style="text-align:right;">
+49554
+</td>
+<td style="text-align:right;">
+854.20
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+128
+</td>
+<td style="text-align:right;">
+49840
+</td>
+<td style="text-align:right;">
+1431.20
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+128
+</td>
+<td style="text-align:right;">
+50194
+</td>
+<td style="text-align:right;">
+804.29
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+128
+</td>
+<td style="text-align:right;">
+50686
+</td>
+<td style="text-align:right;">
+1630.03
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+129
+</td>
+<td style="text-align:right;">
+49447
+</td>
+<td style="text-align:right;">
+1059.49
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+129
+</td>
+<td style="text-align:right;">
+49554
+</td>
+<td style="text-align:right;">
+827.37
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+129
+</td>
+<td style="text-align:right;">
+49840
+</td>
+<td style="text-align:right;">
+1098.75
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+129
+</td>
+<td style="text-align:right;">
+50194
+</td>
+<td style="text-align:right;">
+866.06
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+129
+</td>
+<td style="text-align:right;">
+50686
+</td>
+<td style="text-align:right;">
+1868.68
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+130
+</td>
+<td style="text-align:right;">
+49447
+</td>
+<td style="text-align:right;">
+1770.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+130
+</td>
+<td style="text-align:right;">
+49452
+</td>
+<td style="text-align:right;">
+671.88
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+130
+</td>
+<td style="text-align:right;">
+49491
+</td>
+<td style="text-align:right;">
+3444.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+130
+</td>
+<td style="text-align:right;">
+49558
+</td>
+<td style="text-align:right;">
+921.04
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+130
+</td>
+<td style="text-align:right;">
+49604
+</td>
+<td style="text-align:right;">
+253.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+130
+</td>
+<td style="text-align:right;">
+49629
+</td>
+<td style="text-align:right;">
+1201.56
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+130
+</td>
+<td style="text-align:right;">
+49653
+</td>
+<td style="text-align:right;">
+799.29
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+130
+</td>
+<td style="text-align:right;">
+49695
+</td>
+<td style="text-align:right;">
+628.10
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+131
+</td>
+<td style="text-align:right;">
+49447
+</td>
+<td style="text-align:right;">
+547.82
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+131
+</td>
+<td style="text-align:right;">
+49554
+</td>
+<td style="text-align:right;">
+1662.11
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+131
+</td>
+<td style="text-align:right;">
+49840
+</td>
+<td style="text-align:right;">
+1336.10
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+131
+</td>
+<td style="text-align:right;">
+50194
+</td>
+<td style="text-align:right;">
+750.70
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+131
+</td>
+<td style="text-align:right;">
+50686
+</td>
+<td style="text-align:right;">
+1757.82
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+132
+</td>
+<td style="text-align:right;">
+49447
+</td>
+<td style="text-align:right;">
+1008.72
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+132
+</td>
+<td style="text-align:right;">
+49471
+</td>
+<td style="text-align:right;">
+1115.03
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+132
+</td>
+<td style="text-align:right;">
+49554
+</td>
+<td style="text-align:right;">
+1293.20
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+132
+</td>
+<td style="text-align:right;">
+49557
+</td>
+<td style="text-align:right;">
+2394.30
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+132
+</td>
+<td style="text-align:right;">
+49574
+</td>
+<td style="text-align:right;">
+2258.57
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+132
+</td>
+<td style="text-align:right;">
+49597
+</td>
+<td style="text-align:right;">
+756.77
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+132
+</td>
+<td style="text-align:right;">
+49628
+</td>
+<td style="text-align:right;">
+1506.11
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+132
+</td>
+<td style="text-align:right;">
+49840
+</td>
+<td style="text-align:right;">
+1430.04
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+132
+</td>
+<td style="text-align:right;">
+50194
+</td>
+<td style="text-align:right;">
+883.56
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+132
+</td>
+<td style="text-align:right;">
+50686
+</td>
+<td style="text-align:right;">
+1816.18
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+133
+</td>
+<td style="text-align:right;">
+49476
+</td>
+<td style="text-align:right;">
+899.74
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+133
+</td>
+<td style="text-align:right;">
+49554
+</td>
+<td style="text-align:right;">
+253.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+133
+</td>
+<td style="text-align:right;">
+49559
+</td>
+<td style="text-align:right;">
+1770.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+133
+</td>
+<td style="text-align:right;">
+49583
+</td>
+<td style="text-align:right;">
+2196.70
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+133
+</td>
+<td style="text-align:right;">
+49621
+</td>
+<td style="text-align:right;">
+1696.34
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+133
+</td>
+<td style="text-align:right;">
+49714
+</td>
+<td style="text-align:right;">
+1123.02
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+134
+</td>
+<td style="text-align:right;">
+49476
+</td>
+<td style="text-align:right;">
+1722.25
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+134
+</td>
+<td style="text-align:right;">
+49484
+</td>
+<td style="text-align:right;">
+4512.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+134
+</td>
+<td style="text-align:right;">
+49621
+</td>
+<td style="text-align:right;">
+1718.56
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+134
+</td>
+<td style="text-align:right;">
+49714
+</td>
+<td style="text-align:right;">
+1127.94
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+134
+</td>
+<td style="text-align:right;">
+50218
+</td>
+<td style="text-align:right;">
+1633.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+135
+</td>
+<td style="text-align:right;">
+49444
+</td>
+<td style="text-align:right;">
+1583.97
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+135
+</td>
+<td style="text-align:right;">
+49484
+</td>
+<td style="text-align:right;">
+1714.63
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+135
+</td>
+<td style="text-align:right;">
+49626
+</td>
+<td style="text-align:right;">
+1560.10
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+135
+</td>
+<td style="text-align:right;">
+49770
+</td>
+<td style="text-align:right;">
+1157.74
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+135
+</td>
+<td style="text-align:right;">
+50218
+</td>
+<td style="text-align:right;">
+72.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+136
+</td>
+<td style="text-align:right;">
+49444
+</td>
+<td style="text-align:right;">
+1689.23
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+136
+</td>
+<td style="text-align:right;">
+49484
+</td>
+<td style="text-align:right;">
+1778.92
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+136
+</td>
+<td style="text-align:right;">
+49626
+</td>
+<td style="text-align:right;">
+1479.15
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+136
+</td>
+<td style="text-align:right;">
+49684
+</td>
+<td style="text-align:right;">
+3362.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+136
+</td>
+<td style="text-align:right;">
+49770
+</td>
+<td style="text-align:right;">
+1201.45
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+137
+</td>
+<td style="text-align:right;">
+49451
+</td>
+<td style="text-align:right;">
+3362.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+137
+</td>
+<td style="text-align:right;">
+49463
+</td>
+<td style="text-align:right;">
+602.34
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+137
+</td>
+<td style="text-align:right;">
+49563
+</td>
+<td style="text-align:right;">
+1307.70
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+137
+</td>
+<td style="text-align:right;">
+49594
+</td>
+<td style="text-align:right;">
+608.45
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+137
+</td>
+<td style="text-align:right;">
+49617
+</td>
+<td style="text-align:right;">
+1617.88
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+137
+</td>
+<td style="text-align:right;">
+49702
+</td>
+<td style="text-align:right;">
+1007.83
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+137
+</td>
+<td style="text-align:right;">
+49971
+</td>
+<td style="text-align:right;">
+1559.05
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+138
+</td>
+<td style="text-align:right;">
+49451
+</td>
+<td style="text-align:right;">
+3362.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+138
+</td>
+<td style="text-align:right;">
+49463
+</td>
+<td style="text-align:right;">
+705.14
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+138
+</td>
+<td style="text-align:right;">
+49563
+</td>
+<td style="text-align:right;">
+1386.68
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+138
+</td>
+<td style="text-align:right;">
+49583
+</td>
+<td style="text-align:right;">
+1793.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+138
+</td>
+<td style="text-align:right;">
+49594
+</td>
+<td style="text-align:right;">
+741.93
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+138
+</td>
+<td style="text-align:right;">
+49617
+</td>
+<td style="text-align:right;">
+1724.04
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+138
+</td>
+<td style="text-align:right;">
+49702
+</td>
+<td style="text-align:right;">
+1541.78
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+138
+</td>
+<td style="text-align:right;">
+49971
+</td>
+<td style="text-align:right;">
+1278.94
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+139
+</td>
+<td style="text-align:right;">
+49444
+</td>
+<td style="text-align:right;">
+1251.54
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+139
+</td>
+<td style="text-align:right;">
+49484
+</td>
+<td style="text-align:right;">
+834.96
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+139
+</td>
+<td style="text-align:right;">
+49564
+</td>
+<td style="text-align:right;">
+1480.05
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+139
+</td>
+<td style="text-align:right;">
+49626
+</td>
+<td style="text-align:right;">
+854.43
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+139
+</td>
+<td style="text-align:right;">
+49770
+</td>
+<td style="text-align:right;">
+414.06
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+139
+</td>
+<td style="text-align:right;">
+50218
+</td>
+<td style="text-align:right;">
+253.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+140
+</td>
+<td style="text-align:right;">
+49442
+</td>
+<td style="text-align:right;">
+1128.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+140
+</td>
+<td style="text-align:right;">
+49444
+</td>
+<td style="text-align:right;">
+1168.62
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+140
+</td>
+<td style="text-align:right;">
+49484
+</td>
+<td style="text-align:right;">
+1218.83
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+140
+</td>
+<td style="text-align:right;">
+49564
+</td>
+<td style="text-align:right;">
+1480.05
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+140
+</td>
+<td style="text-align:right;">
+49626
+</td>
+<td style="text-align:right;">
+824.81
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+140
+</td>
+<td style="text-align:right;">
+49770
+</td>
+<td style="text-align:right;">
+331.25
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+141
+</td>
+<td style="text-align:right;">
+49442
+</td>
+<td style="text-align:right;">
+1128.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+141
+</td>
+<td style="text-align:right;">
+49472
+</td>
+<td style="text-align:right;">
+1186.75
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+141
+</td>
+<td style="text-align:right;">
+49658
+</td>
+<td style="text-align:right;">
+2450.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+141
+</td>
+<td style="text-align:right;">
+49684
+</td>
+<td style="text-align:right;">
+3362.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+141
+</td>
+<td style="text-align:right;">
+49701
+</td>
+<td style="text-align:right;">
+48.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+142
+</td>
+<td style="text-align:right;">
+49472
+</td>
+<td style="text-align:right;">
+1127.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+142
+</td>
+<td style="text-align:right;">
+49628
+</td>
+<td style="text-align:right;">
+48.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+142
+</td>
+<td style="text-align:right;">
+49658
+</td>
+<td style="text-align:right;">
+2450.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+143
+</td>
+<td style="text-align:right;">
+49455
+</td>
+<td style="text-align:right;">
+2450.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+143
+</td>
+<td style="text-align:right;">
+49471
+</td>
+<td style="text-align:right;">
+790.20
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+143
+</td>
+<td style="text-align:right;">
+49557
+</td>
+<td style="text-align:right;">
+1982.20
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+143
+</td>
+<td style="text-align:right;">
+49574
+</td>
+<td style="text-align:right;">
+1749.45
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+143
+</td>
+<td style="text-align:right;">
+49597
+</td>
+<td style="text-align:right;">
+952.47
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+143
+</td>
+<td style="text-align:right;">
+49628
+</td>
+<td style="text-align:right;">
+1734.46
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+143
+</td>
+<td style="text-align:right;">
+49701
+</td>
+<td style="text-align:right;">
+253.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+143
+</td>
+<td style="text-align:right;">
+50009
+</td>
+<td style="text-align:right;">
+2450.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+144
+</td>
+<td style="text-align:right;">
+49455
+</td>
+<td style="text-align:right;">
+2450.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+144
+</td>
+<td style="text-align:right;">
+49471
+</td>
+<td style="text-align:right;">
+594.72
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+144
+</td>
+<td style="text-align:right;">
+49557
+</td>
+<td style="text-align:right;">
+1982.20
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+144
+</td>
+<td style="text-align:right;">
+49574
+</td>
+<td style="text-align:right;">
+2017.20
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+144
+</td>
+<td style="text-align:right;">
+49597
+</td>
+<td style="text-align:right;">
+546.02
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+144
+</td>
+<td style="text-align:right;">
+49628
+</td>
+<td style="text-align:right;">
+1647.79
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+144
+</td>
+<td style="text-align:right;">
+50009
+</td>
+<td style="text-align:right;">
+1128.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+145
+</td>
+<td style="text-align:right;">
+49454
+</td>
+<td style="text-align:right;">
+1629.23
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+145
+</td>
+<td style="text-align:right;">
+49479
+</td>
+<td style="text-align:right;">
+1685.87
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+145
+</td>
+<td style="text-align:right;">
+49556
+</td>
+<td style="text-align:right;">
+1128.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+145
+</td>
+<td style="text-align:right;">
+49612
+</td>
+<td style="text-align:right;">
+308.10
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+145
+</td>
+<td style="text-align:right;">
+49623
+</td>
+<td style="text-align:right;">
+274.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+145
+</td>
+<td style="text-align:right;">
+49659
+</td>
+<td style="text-align:right;">
+389.87
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+145
+</td>
+<td style="text-align:right;">
+49661
+</td>
+<td style="text-align:right;">
+602.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+145
+</td>
+<td style="text-align:right;">
+49997
+</td>
+<td style="text-align:right;">
+691.67
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+146
+</td>
+<td style="text-align:right;">
+49454
+</td>
+<td style="text-align:right;">
+1629.23
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+146
+</td>
+<td style="text-align:right;">
+49479
+</td>
+<td style="text-align:right;">
+1801.14
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+146
+</td>
+<td style="text-align:right;">
+49556
+</td>
+<td style="text-align:right;">
+1770.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+146
+</td>
+<td style="text-align:right;">
+49612
+</td>
+<td style="text-align:right;">
+422.11
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+146
+</td>
+<td style="text-align:right;">
+49623
+</td>
+<td style="text-align:right;">
+135.60
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+146
+</td>
+<td style="text-align:right;">
+49659
+</td>
+<td style="text-align:right;">
+389.87
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+146
+</td>
+<td style="text-align:right;">
+49661
+</td>
+<td style="text-align:right;">
+644.19
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+147
+</td>
+<td style="text-align:right;">
+49454
+</td>
+<td style="text-align:right;">
+396.75
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+147
+</td>
+<td style="text-align:right;">
+49479
+</td>
+<td style="text-align:right;">
+876.67
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+147
+</td>
+<td style="text-align:right;">
+49556
+</td>
+<td style="text-align:right;">
+4512.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+147
+</td>
+<td style="text-align:right;">
+49612
+</td>
+<td style="text-align:right;">
+640.57
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+147
+</td>
+<td style="text-align:right;">
+49623
+</td>
+<td style="text-align:right;">
+1127.67
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+147
+</td>
+<td style="text-align:right;">
+49659
+</td>
+<td style="text-align:right;">
+667.89
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+147
+</td>
+<td style="text-align:right;">
+49661
+</td>
+<td style="text-align:right;">
+1115.63
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+147
+</td>
+<td style="text-align:right;">
+49997
+</td>
+<td style="text-align:right;">
+187.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+148
+</td>
+<td style="text-align:right;">
+49454
+</td>
+<td style="text-align:right;">
+1180.08
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+148
+</td>
+<td style="text-align:right;">
+49479
+</td>
+<td style="text-align:right;">
+1801.14
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+148
+</td>
+<td style="text-align:right;">
+49556
+</td>
+<td style="text-align:right;">
+4512.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+148
+</td>
+<td style="text-align:right;">
+49612
+</td>
+<td style="text-align:right;">
+767.02
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+148
+</td>
+<td style="text-align:right;">
+49623
+</td>
+<td style="text-align:right;">
+1127.67
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+148
+</td>
+<td style="text-align:right;">
+49659
+</td>
+<td style="text-align:right;">
+718.27
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+148
+</td>
+<td style="text-align:right;">
+49661
+</td>
+<td style="text-align:right;">
+1099.88
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+148
+</td>
+<td style="text-align:right;">
+49997
+</td>
+<td style="text-align:right;">
+187.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+149
+</td>
+<td style="text-align:right;">
+49471
+</td>
+<td style="text-align:right;">
+751.06
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+149
+</td>
+<td style="text-align:right;">
+49574
+</td>
+<td style="text-align:right;">
+2258.57
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+149
+</td>
+<td style="text-align:right;">
+49597
+</td>
+<td style="text-align:right;">
+493.90
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+149
+</td>
+<td style="text-align:right;">
+49628
+</td>
+<td style="text-align:right;">
+1620.95
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+150
+</td>
+<td style="text-align:right;">
+49476
+</td>
+<td style="text-align:right;">
+1239.38
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+150
+</td>
+<td style="text-align:right;">
+49559
+</td>
+<td style="text-align:right;">
+1770.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+150
+</td>
+<td style="text-align:right;">
+49583
+</td>
+<td style="text-align:right;">
+654.58
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+150
+</td>
+<td style="text-align:right;">
+49621
+</td>
+<td style="text-align:right;">
+1159.52
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+150
+</td>
+<td style="text-align:right;">
+49714
+</td>
+<td style="text-align:right;">
+213.69
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+151
+</td>
+<td style="text-align:right;">
+49476
+</td>
+<td style="text-align:right;">
+879.17
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+151
+</td>
+<td style="text-align:right;">
+49559
+</td>
+<td style="text-align:right;">
+1770.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+151
+</td>
+<td style="text-align:right;">
+49583
+</td>
+<td style="text-align:right;">
+1062.07
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+151
+</td>
+<td style="text-align:right;">
+49621
+</td>
+<td style="text-align:right;">
+1088.01
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+151
+</td>
+<td style="text-align:right;">
+49714
+</td>
+<td style="text-align:right;">
+431.75
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+152
+</td>
+<td style="text-align:right;">
+49451
+</td>
+<td style="text-align:right;">
+1770.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+152
+</td>
+<td style="text-align:right;">
+49463
+</td>
+<td style="text-align:right;">
+727.32
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+152
+</td>
+<td style="text-align:right;">
+49563
+</td>
+<td style="text-align:right;">
+991.71
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+152
+</td>
+<td style="text-align:right;">
+49594
+</td>
+<td style="text-align:right;">
+758.77
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+152
+</td>
+<td style="text-align:right;">
+49617
+</td>
+<td style="text-align:right;">
+1141.21
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+152
+</td>
+<td style="text-align:right;">
+49624
+</td>
+<td style="text-align:right;">
+3362.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+152
+</td>
+<td style="text-align:right;">
+49702
+</td>
+<td style="text-align:right;">
+1214.75
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+152
+</td>
+<td style="text-align:right;">
+49971
+</td>
+<td style="text-align:right;">
+688.38
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+153
+</td>
+<td style="text-align:right;">
+49451
+</td>
+<td style="text-align:right;">
+3362.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+153
+</td>
+<td style="text-align:right;">
+49463
+</td>
+<td style="text-align:right;">
+356.67
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+153
+</td>
+<td style="text-align:right;">
+49563
+</td>
+<td style="text-align:right;">
+1219.46
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+153
+</td>
+<td style="text-align:right;">
+49594
+</td>
+<td style="text-align:right;">
+776.93
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+153
+</td>
+<td style="text-align:right;">
+49617
+</td>
+<td style="text-align:right;">
+1179.27
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+153
+</td>
+<td style="text-align:right;">
+49702
+</td>
+<td style="text-align:right;">
+1258.11
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+153
+</td>
+<td style="text-align:right;">
+49971
+</td>
+<td style="text-align:right;">
+688.38
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+154
+</td>
+<td style="text-align:right;">
+49442
+</td>
+<td style="text-align:right;">
+2450.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+154
+</td>
+<td style="text-align:right;">
+49472
+</td>
+<td style="text-align:right;">
+1191.52
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+154
+</td>
+<td style="text-align:right;">
+49701
+</td>
+<td style="text-align:right;">
+1527.81
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+154
+</td>
+<td style="text-align:right;">
+50025
+</td>
+<td style="text-align:right;">
+84.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+155
+</td>
+<td style="text-align:right;">
+49442
+</td>
+<td style="text-align:right;">
+3362.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+155
+</td>
+<td style="text-align:right;">
+49472
+</td>
+<td style="text-align:right;">
+1124.65
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+155
+</td>
+<td style="text-align:right;">
+49701
+</td>
+<td style="text-align:right;">
+1685.87
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+156
+</td>
+<td style="text-align:right;">
+49474
+</td>
+<td style="text-align:right;">
+654.58
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+156
+</td>
+<td style="text-align:right;">
+49542
+</td>
+<td style="text-align:right;">
+786.71
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+156
+</td>
+<td style="text-align:right;">
+49553
+</td>
+<td style="text-align:right;">
+1061.57
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+156
+</td>
+<td style="text-align:right;">
+49618
+</td>
+<td style="text-align:right;">
+336.03
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+157
+</td>
+<td style="text-align:right;">
+49443
+</td>
+<td style="text-align:right;">
+151.88
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+157
+</td>
+<td style="text-align:right;">
+49474
+</td>
+<td style="text-align:right;">
+43.20
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+157
+</td>
+<td style="text-align:right;">
+49542
+</td>
+<td style="text-align:right;">
+738.20
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+157
+</td>
+<td style="text-align:right;">
+49618
+</td>
+<td style="text-align:right;">
+161.82
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+158
+</td>
+<td style="text-align:right;">
+49610
+</td>
+<td style="text-align:right;">
+1552.17
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+158
+</td>
+<td style="text-align:right;">
+49615
+</td>
+<td style="text-align:right;">
+740.07
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+158
+</td>
+<td style="text-align:right;">
+49703
+</td>
+<td style="text-align:right;">
+42.25
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+158
+</td>
+<td style="text-align:right;">
+49863
+</td>
+<td style="text-align:right;">
+1021.67
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+159
+</td>
+<td style="text-align:right;">
+49610
+</td>
+<td style="text-align:right;">
+1234.75
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+159
+</td>
+<td style="text-align:right;">
+49615
+</td>
+<td style="text-align:right;">
+740.07
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+159
+</td>
+<td style="text-align:right;">
+49703
+</td>
+<td style="text-align:right;">
+42.25
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+159
+</td>
+<td style="text-align:right;">
+49863
+</td>
+<td style="text-align:right;">
+1021.67
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+160
+</td>
+<td style="text-align:right;">
+49573
+</td>
+<td style="text-align:right;">
+1484.04
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+160
+</td>
+<td style="text-align:right;">
+49622
+</td>
+<td style="text-align:right;">
+1466.42
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+160
+</td>
+<td style="text-align:right;">
+49681
+</td>
+<td style="text-align:right;">
+3362.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+160
+</td>
+<td style="text-align:right;">
+49700
+</td>
+<td style="text-align:right;">
+920.83
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+160
+</td>
+<td style="text-align:right;">
+50027
+</td>
+<td style="text-align:right;">
+909.79
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+161
+</td>
+<td style="text-align:right;">
+49477
+</td>
+<td style="text-align:right;">
+72.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+161
+</td>
+<td style="text-align:right;">
+49573
+</td>
+<td style="text-align:right;">
+740.83
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+161
+</td>
+<td style="text-align:right;">
+49622
+</td>
+<td style="text-align:right;">
+1423.64
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+161
+</td>
+<td style="text-align:right;">
+49681
+</td>
+<td style="text-align:right;">
+595.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+161
+</td>
+<td style="text-align:right;">
+49700
+</td>
+<td style="text-align:right;">
+1266.42
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+161
+</td>
+<td style="text-align:right;">
+50027
+</td>
+<td style="text-align:right;">
+831.67
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+162
+</td>
+<td style="text-align:right;">
+49441
+</td>
+<td style="text-align:right;">
+48.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+162
+</td>
+<td style="text-align:right;">
+49477
+</td>
+<td style="text-align:right;">
+595.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+162
+</td>
+<td style="text-align:right;">
+49603
+</td>
+<td style="text-align:right;">
+523.48
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+162
+</td>
+<td style="text-align:right;">
+49631
+</td>
+<td style="text-align:right;">
+758.24
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+162
+</td>
+<td style="text-align:right;">
+49651
+</td>
+<td style="text-align:right;">
+3362.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+162
+</td>
+<td style="text-align:right;">
+49691
+</td>
+<td style="text-align:right;">
+1252.67
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+162
+</td>
+<td style="text-align:right;">
+49967
+</td>
+<td style="text-align:right;">
+1949.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+163
+</td>
+<td style="text-align:right;">
+49603
+</td>
+<td style="text-align:right;">
+618.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+163
+</td>
+<td style="text-align:right;">
+49631
+</td>
+<td style="text-align:right;">
+776.89
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+163
+</td>
+<td style="text-align:right;">
+49651
+</td>
+<td style="text-align:right;">
+3362.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+163
+</td>
+<td style="text-align:right;">
+49691
+</td>
+<td style="text-align:right;">
+1239.38
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+163
+</td>
+<td style="text-align:right;">
+49967
+</td>
+<td style="text-align:right;">
+1949.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+164
+</td>
+<td style="text-align:right;">
+49572
+</td>
+<td style="text-align:right;">
+1591.96
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+164
+</td>
+<td style="text-align:right;">
+49608
+</td>
+<td style="text-align:right;">
+2241.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+164
+</td>
+<td style="text-align:right;">
+49624
+</td>
+<td style="text-align:right;">
+1492.11
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+164
+</td>
+<td style="text-align:right;">
+49689
+</td>
+<td style="text-align:right;">
+1989.36
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+164
+</td>
+<td style="text-align:right;">
+49983
+</td>
+<td style="text-align:right;">
+3444.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+165
+</td>
+<td style="text-align:right;">
+49572
+</td>
+<td style="text-align:right;">
+1677.91
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+165
+</td>
+<td style="text-align:right;">
+49608
+</td>
+<td style="text-align:right;">
+2241.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+165
+</td>
+<td style="text-align:right;">
+49624
+</td>
+<td style="text-align:right;">
+1390.86
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+165
+</td>
+<td style="text-align:right;">
+49689
+</td>
+<td style="text-align:right;">
+1989.36
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+165
+</td>
+<td style="text-align:right;">
+49983
+</td>
+<td style="text-align:right;">
+2450.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+166
+</td>
+<td style="text-align:right;">
+49482
+</td>
+<td style="text-align:right;">
+661.80
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+166
+</td>
+<td style="text-align:right;">
+49523
+</td>
+<td style="text-align:right;">
+1281.98
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+166
+</td>
+<td style="text-align:right;">
+49607
+</td>
+<td style="text-align:right;">
+1706.84
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+166
+</td>
+<td style="text-align:right;">
+49694
+</td>
+<td style="text-align:right;">
+1067.29
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+166
+</td>
+<td style="text-align:right;">
+49700
+</td>
+<td style="text-align:right;">
+501.23
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+167
+</td>
+<td style="text-align:right;">
+49482
+</td>
+<td style="text-align:right;">
+684.73
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+167
+</td>
+<td style="text-align:right;">
+49523
+</td>
+<td style="text-align:right;">
+1205.93
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+167
+</td>
+<td style="text-align:right;">
+49607
+</td>
+<td style="text-align:right;">
+1706.84
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+167
+</td>
+<td style="text-align:right;">
+49694
+</td>
+<td style="text-align:right;">
+1105.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+167
+</td>
+<td style="text-align:right;">
+49700
+</td>
+<td style="text-align:right;">
+501.23
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+168
+</td>
+<td style="text-align:right;">
+49465
+</td>
+<td style="text-align:right;">
+2241.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+168
+</td>
+<td style="text-align:right;">
+49593
+</td>
+<td style="text-align:right;">
+1206.83
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+168
+</td>
+<td style="text-align:right;">
+49654
+</td>
+<td style="text-align:right;">
+1867.78
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+168
+</td>
+<td style="text-align:right;">
+49685
+</td>
+<td style="text-align:right;">
+1470.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+168
+</td>
+<td style="text-align:right;">
+49973
+</td>
+<td style="text-align:right;">
+4512.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+169
+</td>
+<td style="text-align:right;">
+49465
+</td>
+<td style="text-align:right;">
+2241.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+169
+</td>
+<td style="text-align:right;">
+49578
+</td>
+<td style="text-align:right;">
+2450.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+169
+</td>
+<td style="text-align:right;">
+49593
+</td>
+<td style="text-align:right;">
+1100.08
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+169
+</td>
+<td style="text-align:right;">
+49654
+</td>
+<td style="text-align:right;">
+1867.78
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+169
+</td>
+<td style="text-align:right;">
+49685
+</td>
+<td style="text-align:right;">
+1633.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+169
+</td>
+<td style="text-align:right;">
+49973
+</td>
+<td style="text-align:right;">
+2450.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+170
+</td>
+<td style="text-align:right;">
+49542
+</td>
+<td style="text-align:right;">
+460.53
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+170
+</td>
+<td style="text-align:right;">
+49553
+</td>
+<td style="text-align:right;">
+773.64
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+170
+</td>
+<td style="text-align:right;">
+49599
+</td>
+<td style="text-align:right;">
+253.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+170
+</td>
+<td style="text-align:right;">
+49618
+</td>
+<td style="text-align:right;">
+554.60
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+171
+</td>
+<td style="text-align:right;">
+49542
+</td>
+<td style="text-align:right;">
+153.31
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+171
+</td>
+<td style="text-align:right;">
+49553
+</td>
+<td style="text-align:right;">
+660.17
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+171
+</td>
+<td style="text-align:right;">
+49618
+</td>
+<td style="text-align:right;">
+24.85
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+172
+</td>
+<td style="text-align:right;">
+49610
+</td>
+<td style="text-align:right;">
+924.25
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+172
+</td>
+<td style="text-align:right;">
+49615
+</td>
+<td style="text-align:right;">
+825.78
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+172
+</td>
+<td style="text-align:right;">
+49703
+</td>
+<td style="text-align:right;">
+280.40
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+172
+</td>
+<td style="text-align:right;">
+49863
+</td>
+<td style="text-align:right;">
+1021.67
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+173
+</td>
+<td style="text-align:right;">
+49602
+</td>
+<td style="text-align:right;">
+3362.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+173
+</td>
+<td style="text-align:right;">
+49610
+</td>
+<td style="text-align:right;">
+420.08
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+173
+</td>
+<td style="text-align:right;">
+49615
+</td>
+<td style="text-align:right;">
+898.27
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+173
+</td>
+<td style="text-align:right;">
+49703
+</td>
+<td style="text-align:right;">
+217.56
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+173
+</td>
+<td style="text-align:right;">
+49863
+</td>
+<td style="text-align:right;">
+1021.67
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+174
+</td>
+<td style="text-align:right;">
+49437
+</td>
+<td style="text-align:right;">
+3008.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+174
+</td>
+<td style="text-align:right;">
+49464
+</td>
+<td style="text-align:right;">
+795.11
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+174
+</td>
+<td style="text-align:right;">
+49550
+</td>
+<td style="text-align:right;">
+331.22
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+174
+</td>
+<td style="text-align:right;">
+49565
+</td>
+<td style="text-align:right;">
+1263.88
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+174
+</td>
+<td style="text-align:right;">
+49602
+</td>
+<td style="text-align:right;">
+1446.45
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+174
+</td>
+<td style="text-align:right;">
+49616
+</td>
+<td style="text-align:right;">
+1047.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+175
+</td>
+<td style="text-align:right;">
+49437
+</td>
+<td style="text-align:right;">
+3008.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+175
+</td>
+<td style="text-align:right;">
+49464
+</td>
+<td style="text-align:right;">
+651.83
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+175
+</td>
+<td style="text-align:right;">
+49550
+</td>
+<td style="text-align:right;">
+287.68
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+175
+</td>
+<td style="text-align:right;">
+49565
+</td>
+<td style="text-align:right;">
+1263.88
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+175
+</td>
+<td style="text-align:right;">
+49602
+</td>
+<td style="text-align:right;">
+1344.56
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+175
+</td>
+<td style="text-align:right;">
+49616
+</td>
+<td style="text-align:right;">
+693.19
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+176
+</td>
+<td style="text-align:right;">
+49550
+</td>
+<td style="text-align:right;">
+253.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+176
+</td>
+<td style="text-align:right;">
+49552
+</td>
+<td style="text-align:right;">
+923.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+176
+</td>
+<td style="text-align:right;">
+49595
+</td>
+<td style="text-align:right;">
+232.70
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+176
+</td>
+<td style="text-align:right;">
+49630
+</td>
+<td style="text-align:right;">
+819.23
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+176
+</td>
+<td style="text-align:right;">
+49682
+</td>
+<td style="text-align:right;">
+1921.14
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+176
+</td>
+<td style="text-align:right;">
+49853
+</td>
+<td style="text-align:right;">
+274.70
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+177
+</td>
+<td style="text-align:right;">
+49552
+</td>
+<td style="text-align:right;">
+1008.61
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+177
+</td>
+<td style="text-align:right;">
+49595
+</td>
+<td style="text-align:right;">
+221.64
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+177
+</td>
+<td style="text-align:right;">
+49630
+</td>
+<td style="text-align:right;">
+1266.42
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+177
+</td>
+<td style="text-align:right;">
+49682
+</td>
+<td style="text-align:right;">
+2097.57
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+177
+</td>
+<td style="text-align:right;">
+49853
+</td>
+<td style="text-align:right;">
+300.39
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+178
+</td>
+<td style="text-align:right;">
+49448
+</td>
+<td style="text-align:right;">
+2241.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+178
+</td>
+<td style="text-align:right;">
+49462
+</td>
+<td style="text-align:right;">
+1275.13
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+178
+</td>
+<td style="text-align:right;">
+49613
+</td>
+<td style="text-align:right;">
+1705.66
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+178
+</td>
+<td style="text-align:right;">
+49647
+</td>
+<td style="text-align:right;">
+4512.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+178
+</td>
+<td style="text-align:right;">
+49687
+</td>
+<td style="text-align:right;">
+1424.58
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+179
+</td>
+<td style="text-align:right;">
+49448
+</td>
+<td style="text-align:right;">
+2241.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+179
+</td>
+<td style="text-align:right;">
+49462
+</td>
+<td style="text-align:right;">
+1260.83
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+179
+</td>
+<td style="text-align:right;">
+49613
+</td>
+<td style="text-align:right;">
+1705.66
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+179
+</td>
+<td style="text-align:right;">
+49647
+</td>
+<td style="text-align:right;">
+4512.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+179
+</td>
+<td style="text-align:right;">
+49687
+</td>
+<td style="text-align:right;">
+950.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+179
+</td>
+<td style="text-align:right;">
+50014
+</td>
+<td style="text-align:right;">
+208.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+180
+</td>
+<td style="text-align:right;">
+49573
+</td>
+<td style="text-align:right;">
+264.56
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+180
+</td>
+<td style="text-align:right;">
+49622
+</td>
+<td style="text-align:right;">
+930.75
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+180
+</td>
+<td style="text-align:right;">
+49681
+</td>
+<td style="text-align:right;">
+1128.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+180
+</td>
+<td style="text-align:right;">
+50027
+</td>
+<td style="text-align:right;">
+1859.54
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+181
+</td>
+<td style="text-align:right;">
+49573
+</td>
+<td style="text-align:right;">
+802.06
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+181
+</td>
+<td style="text-align:right;">
+49622
+</td>
+<td style="text-align:right;">
+825.78
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+181
+</td>
+<td style="text-align:right;">
+49681
+</td>
+<td style="text-align:right;">
+595.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+181
+</td>
+<td style="text-align:right;">
+50015
+</td>
+<td style="text-align:right;">
+312.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+181
+</td>
+<td style="text-align:right;">
+50027
+</td>
+<td style="text-align:right;">
+2165.82
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+182
+</td>
+<td style="text-align:right;">
+49477
+</td>
+<td style="text-align:right;">
+72.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+182
+</td>
+<td style="text-align:right;">
+49603
+</td>
+<td style="text-align:right;">
+820.22
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+182
+</td>
+<td style="text-align:right;">
+49631
+</td>
+<td style="text-align:right;">
+943.87
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+182
+</td>
+<td style="text-align:right;">
+49651
+</td>
+<td style="text-align:right;">
+3362.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+182
+</td>
+<td style="text-align:right;">
+49691
+</td>
+<td style="text-align:right;">
+1690.28
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+182
+</td>
+<td style="text-align:right;">
+49698
+</td>
+<td style="text-align:right;">
+3444.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+182
+</td>
+<td style="text-align:right;">
+49967
+</td>
+<td style="text-align:right;">
+3362.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+183
+</td>
+<td style="text-align:right;">
+49477
+</td>
+<td style="text-align:right;">
+595.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+183
+</td>
+<td style="text-align:right;">
+49603
+</td>
+<td style="text-align:right;">
+886.45
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+183
+</td>
+<td style="text-align:right;">
+49631
+</td>
+<td style="text-align:right;">
+909.26
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+183
+</td>
+<td style="text-align:right;">
+49691
+</td>
+<td style="text-align:right;">
+1784.54
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+183
+</td>
+<td style="text-align:right;">
+49967
+</td>
+<td style="text-align:right;">
+2653.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+184
+</td>
+<td style="text-align:right;">
+49572
+</td>
+<td style="text-align:right;">
+859.77
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+184
+</td>
+<td style="text-align:right;">
+49624
+</td>
+<td style="text-align:right;">
+1645.37
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+184
+</td>
+<td style="text-align:right;">
+49689
+</td>
+<td style="text-align:right;">
+1895.67
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+184
+</td>
+<td style="text-align:right;">
+49967
+</td>
+<td style="text-align:right;">
+2450.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+185
+</td>
+<td style="text-align:right;">
+49572
+</td>
+<td style="text-align:right;">
+421.49
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+185
+</td>
+<td style="text-align:right;">
+49624
+</td>
+<td style="text-align:right;">
+1758.82
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+185
+</td>
+<td style="text-align:right;">
+49689
+</td>
+<td style="text-align:right;">
+1895.67
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+186
+</td>
+<td style="text-align:right;">
+49600
+</td>
+<td style="text-align:right;">
+1047.68
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+186
+</td>
+<td style="text-align:right;">
+49655
+</td>
+<td style="text-align:right;">
+1125.66
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+186
+</td>
+<td style="text-align:right;">
+49974
+</td>
+<td style="text-align:right;">
+617.05
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+187
+</td>
+<td style="text-align:right;">
+49600
+</td>
+<td style="text-align:right;">
+1049.44
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+187
+</td>
+<td style="text-align:right;">
+49655
+</td>
+<td style="text-align:right;">
+1252.98
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+187
+</td>
+<td style="text-align:right;">
+49974
+</td>
+<td style="text-align:right;">
+617.05
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+188
+</td>
+<td style="text-align:right;">
+49465
+</td>
+<td style="text-align:right;">
+1681.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+188
+</td>
+<td style="text-align:right;">
+49593
+</td>
+<td style="text-align:right;">
+1132.13
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+188
+</td>
+<td style="text-align:right;">
+49654
+</td>
+<td style="text-align:right;">
+1127.67
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+188
+</td>
+<td style="text-align:right;">
+49685
+</td>
+<td style="text-align:right;">
+2241.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+189
+</td>
+<td style="text-align:right;">
+49465
+</td>
+<td style="text-align:right;">
+2241.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+189
+</td>
+<td style="text-align:right;">
+49593
+</td>
+<td style="text-align:right;">
+1503.14
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+189
+</td>
+<td style="text-align:right;">
+49654
+</td>
+<td style="text-align:right;">
+1500.06
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+189
+</td>
+<td style="text-align:right;">
+49685
+</td>
+<td style="text-align:right;">
+2638.92
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+190
+</td>
+<td style="text-align:right;">
+49482
+</td>
+<td style="text-align:right;">
+884.25
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+190
+</td>
+<td style="text-align:right;">
+49523
+</td>
+<td style="text-align:right;">
+1125.53
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+190
+</td>
+<td style="text-align:right;">
+49607
+</td>
+<td style="text-align:right;">
+1989.57
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+190
+</td>
+<td style="text-align:right;">
+49694
+</td>
+<td style="text-align:right;">
+1463.46
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+190
+</td>
+<td style="text-align:right;">
+49700
+</td>
+<td style="text-align:right;">
+746.11
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+191
+</td>
+<td style="text-align:right;">
+49482
+</td>
+<td style="text-align:right;">
+884.25
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+191
+</td>
+<td style="text-align:right;">
+49523
+</td>
+<td style="text-align:right;">
+1277.64
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+191
+</td>
+<td style="text-align:right;">
+49607
+</td>
+<td style="text-align:right;">
+2014.55
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+191
+</td>
+<td style="text-align:right;">
+49694
+</td>
+<td style="text-align:right;">
+1446.25
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+191
+</td>
+<td style="text-align:right;">
+49700
+</td>
+<td style="text-align:right;">
+746.11
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+192
+</td>
+<td style="text-align:right;">
+49600
+</td>
+<td style="text-align:right;">
+900.86
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+192
+</td>
+<td style="text-align:right;">
+49607
+</td>
+<td style="text-align:right;">
+3362.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+192
+</td>
+<td style="text-align:right;">
+49655
+</td>
+<td style="text-align:right;">
+1536.82
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+192
+</td>
+<td style="text-align:right;">
+49694
+</td>
+<td style="text-align:right;">
+56.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+192
+</td>
+<td style="text-align:right;">
+49974
+</td>
+<td style="text-align:right;">
+3362.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+193
+</td>
+<td style="text-align:right;">
+49481
+</td>
+<td style="text-align:right;">
+3008.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+193
+</td>
+<td style="text-align:right;">
+49600
+</td>
+<td style="text-align:right;">
+939.83
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+193
+</td>
+<td style="text-align:right;">
+49655
+</td>
+<td style="text-align:right;">
+1364.14
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+193
+</td>
+<td style="text-align:right;">
+49974
+</td>
+<td style="text-align:right;">
+3362.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+194
+</td>
+<td style="text-align:right;">
+49437
+</td>
+<td style="text-align:right;">
+3008.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+194
+</td>
+<td style="text-align:right;">
+49464
+</td>
+<td style="text-align:right;">
+724.68
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+194
+</td>
+<td style="text-align:right;">
+49550
+</td>
+<td style="text-align:right;">
+615.24
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+194
+</td>
+<td style="text-align:right;">
+49565
+</td>
+<td style="text-align:right;">
+1662.65
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+194
+</td>
+<td style="text-align:right;">
+49602
+</td>
+<td style="text-align:right;">
+1601.09
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+194
+</td>
+<td style="text-align:right;">
+49616
+</td>
+<td style="text-align:right;">
+909.46
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+195
+</td>
+<td style="text-align:right;">
+49437
+</td>
+<td style="text-align:right;">
+3008.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+195
+</td>
+<td style="text-align:right;">
+49464
+</td>
+<td style="text-align:right;">
+1006.74
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+195
+</td>
+<td style="text-align:right;">
+49550
+</td>
+<td style="text-align:right;">
+736.52
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+195
+</td>
+<td style="text-align:right;">
+49565
+</td>
+<td style="text-align:right;">
+1264.11
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+195
+</td>
+<td style="text-align:right;">
+49602
+</td>
+<td style="text-align:right;">
+1695.06
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+195
+</td>
+<td style="text-align:right;">
+49616
+</td>
+<td style="text-align:right;">
+1307.01
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+196
+</td>
+<td style="text-align:right;">
+49552
+</td>
+<td style="text-align:right;">
+820.79
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+196
+</td>
+<td style="text-align:right;">
+49595
+</td>
+<td style="text-align:right;">
+789.14
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+196
+</td>
+<td style="text-align:right;">
+49630
+</td>
+<td style="text-align:right;">
+168.75
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+196
+</td>
+<td style="text-align:right;">
+49682
+</td>
+<td style="text-align:right;">
+2122.40
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+196
+</td>
+<td style="text-align:right;">
+49853
+</td>
+<td style="text-align:right;">
+300.39
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+197
+</td>
+<td style="text-align:right;">
+49552
+</td>
+<td style="text-align:right;">
+820.79
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+197
+</td>
+<td style="text-align:right;">
+49595
+</td>
+<td style="text-align:right;">
+733.52
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+197
+</td>
+<td style="text-align:right;">
+49630
+</td>
+<td style="text-align:right;">
+168.75
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+197
+</td>
+<td style="text-align:right;">
+49682
+</td>
+<td style="text-align:right;">
+1963.37
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+197
+</td>
+<td style="text-align:right;">
+49853
+</td>
+<td style="text-align:right;">
+300.39
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+198
+</td>
+<td style="text-align:right;">
+49462
+</td>
+<td style="text-align:right;">
+1103.42
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+198
+</td>
+<td style="text-align:right;">
+49613
+</td>
+<td style="text-align:right;">
+1705.71
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+198
+</td>
+<td style="text-align:right;">
+49647
+</td>
+<td style="text-align:right;">
+4512.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+198
+</td>
+<td style="text-align:right;">
+49687
+</td>
+<td style="text-align:right;">
+843.71
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+198
+</td>
+<td style="text-align:right;">
+50014
+</td>
+<td style="text-align:right;">
+208.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+199
+</td>
+<td style="text-align:right;">
+49462
+</td>
+<td style="text-align:right;">
+224.04
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+199
+</td>
+<td style="text-align:right;">
+49523
+</td>
+<td style="text-align:right;">
+3362.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+199
+</td>
+<td style="text-align:right;">
+49613
+</td>
+<td style="text-align:right;">
+1761.21
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+199
+</td>
+<td style="text-align:right;">
+49647
+</td>
+<td style="text-align:right;">
+4512.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+199
+</td>
+<td style="text-align:right;">
+49687
+</td>
+<td style="text-align:right;">
+28.17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<pre class="r"><code>d_filtered %&gt;%
+  group_by(common_name, month) %&gt;%
+  filter(month &gt;= 9) %&gt;%
+  summarize(var_intensity = var(intensity,na.rm = TRUE),
+            mean_intensity = mean(intensity, na.rm = TRUE)) %&gt;%
+  ggplot(aes(x = month, y = mean_intensity)) +
+  geom_line() + facet_wrap(~ common_name) +
+  ylab(&quot;Average Tree Coverage&quot;)</code></pre>
+<div class="figure">
+<img src="index_files/figure-html/unnamed-chunk-6-1.png" alt="The above graphs depict how we would expect the average tree coverage to continuously decline but for some, it actually increases." width="672" />
+<p class="caption">
+The above graphs depict how we would expect the average tree coverage to continuously decline but for some, it actually increases.
+</p>
 </div>
 </div>
 <div id="results" class="section level1">
 <h1>Results</h1>
-<p>Show tables, plots, etc. and describe them.</p>
-<pre class="r"><code>m &lt;- leaflet(data) %&gt;% 
-  addTiles() %&gt;% 
-  addCircleMarkers(~x, ~y, radius = ~size,color = ~as.factor(category)) %&gt;% 
-  addPopups(~x[2], ~y[2], &quot;Random popup&quot;)
-m  # a map with the default OSM tile layer</code></pre>
+<pre class="r"><code>##Making Icons
+icons &lt;- awesomeIcons(
+  icon = &#39;ios-close&#39;,
+  iconColor = &#39;white&#39;,
+  library = &#39;ion&#39;,
+  markerColor = trees$color)
+
+##Interactive Leaflet Map
+leaflet(trees) %&gt;% 
+  addTiles() %&gt;%
+  addAwesomeMarkers(~lon, ~lat,
+                    icon=icons,
+                    label = paste(&quot;Tag:&quot;, trees$tag, &quot;|&quot;,
+                    &quot;Species:&quot;, trees$common_name))</code></pre>
+<div id="htmlwidget-b06e32e125973a5f1d35" style="width:576px;height:288px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-b06e32e125973a5f1d35">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addAwesomeMarkers","args":[[43.01030525,43.01007811,43.01004044,43.0099843,43.00992881,43.00984568,43.00978437,43.00958497,43.009599,43.00959601,43.00958671,43.00959058,43.0096208,43.00959205,43.00966007,43.0098103,43.00986566,43.00988894,43.00983152,43.00980734,43.00977931,43.008734,43.00873,43.008752,43.008752,43.00873,43.008731,43.008626,43.00857,43.00937334,43.00880821,43.00862026,43.0086363,43.00850494,43.00837182,43.00836335,43.00830875,43.00833981,43.00852089,43.00848339,43.0084542,43.0084634,43.00846072,43.00844264,43.0084494,43.00846806,43.00803897,43.0080176,43.008574,43.00842901,43.0084295,43.008453,43.00847166,43.00851387,43.00850338,43.00851871,43.00853625,43.00854516,43.00863124,43.00837866,43.00840754,43.00839365,43.00846674,43.00852761,43.00865531,43.00865488,43.00872847,43.00871827,43.00875903,43.00721865,43.00721863,43.007214,43.007212,43.00721,43.007208,43.007211,43.007207,43.007208,43.007207,43.00685882,43.00682083,43.00676354,43.00672719,43.0066959,43.00674803,43.00662772,43.00663904,43.00671958,43.00669649,43.0069307,43.00689835,43.006964,43.0069439,43.00685622,43.00673707,43.00667141,43.00669874,43.00679041,43.00687334],[-78.78204923,-78.78213746,-78.78204,-78.78208843,-78.78205177,-78.78204275,-78.78205234,-78.78233765,-78.782501,-78.78275026,-78.78320236,-78.78323211,-78.78322952,-78.78327906,-78.78326381,-78.78325591,-78.78324827,-78.78325957,-78.78344436,-78.78347636,-78.78349016,-78.783449,-78.783528,-78.783564,-78.783608,-78.783717,-78.783872,-78.78375,-78.783727,-78.78298167,-78.78315459,-78.78310703,-78.78312346,-78.78316655,-78.78326808,-78.78334611,-78.78388381,-78.78412648,-78.78286427,-78.78284154,-78.78280658,-78.78287231,-78.78285023,-78.7827971,-78.78280531,-78.78282226,-78.7827712,-78.78278452,-78.783547,-78.7843245,-78.7842302,-78.784205,-78.78421756,-78.78424569,-78.78427753,-78.78422584,-78.78417713,-78.78421433,-78.78416584,-78.78440191,-78.78432832,-78.78448976,-78.78449322,-78.78448697,-78.78466776,-78.78464059,-78.78467893,-78.78477538,-78.78480548,-78.78496767,-78.78502934,-78.785079,-78.785116,-78.785165,-78.785215,-78.785254,-78.785294,-78.78533,-78.78535,-78.78447497,-78.7844984,-78.78448443,-78.78451403,-78.78442775,-78.78455066,-78.78455041,-78.78461655,-78.7846093,-78.78468433,-78.78498574,-78.78501798,-78.78505,-78.78552507,-78.78551442,-78.78552331,-78.78553492,-78.78559894,-78.78559885,-78.78560262],{"icon":"ios-close","markerColor":["red","black","red","red","black","red","red","black","red","black","darkblue","darkblue","darkblue","orange","orange","orange","orange","orange","orange","orange","orange","purple","purple","purple","purple","purple","purple","purple","purple","darkpurple","darkpurple","darkpurple","darkpurple","darkpurple","darkpurple","darkpurple","darkpurple","darkpurple","blue","blue","blue","blue","blue","blue","blue","blue","beige","beige","purple","yellow","yellow","yellow","yellow","yellow","yellow","yellow","yellow","yellow","yellow","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","lightred","lightred","lightred","lightred","lightred","lightred","lightred","lightred","lightred","lightred","cadetblue","cadetblue","cadetblue","cadetblue","cadetblue","cadetblue","cadetblue","cadetblue","cadetblue","cadetblue","lightgray","lightgray","lightgray","lightgray","lightgray","lightgray","lightgray","lightgray","lightgray","lightgray"],"iconColor":"white","spin":false,"squareMarker":false,"iconRotate":0,"font":"monospace","prefix":"ion"},null,null,{"interactive":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},null,null,null,null,["Tag: 101 | Species: Red Oak","Tag: 102 | Species: Black Oak","Tag: 103 | Species: Red Oak","Tag: 104 | Species: Red Oak","Tag: 105 | Species: Black Oak","Tag: 106 | Species: Red Oak","Tag: 107 | Species: Red Oak","Tag: 108 | Species: Black Oak","Tag: 109 | Species: Red Oak","Tag: 110 | Species: Black Oak","Tag: 111 | Species: Silver Maple","Tag: 112 | Species: Silver Maple","Tag: 113 | Species: Silver Maple","Tag: 114 | Species: Red Maple","Tag: 115 | Species: Red Maple","Tag: 116 | Species: Red Maple","Tag: 117 | Species: Red Maple","Tag: 118 | Species: Red Maple","Tag: 119 | Species: Red Maple","Tag: 120 | Species: Red Maple","Tag: 121 | Species: Red Maple","Tag: 122 | Species: Black Locust","Tag: 123 | Species: Black Locust","Tag: 124 | Species: Black Locust","Tag: 125 | Species: Black Locust","Tag: 126 | Species: Black Locust","Tag: 127 | Species: Black Locust","Tag: 128 | Species: Black Locust","Tag: 129 | Species: Black Locust","Tag: 130 | Species: Sugar Maple","Tag: 131 | Species: Sugar Maple","Tag: 132 | Species: Sugar Maple","Tag: 133 | Species: Sugar Maple","Tag: 134 | Species: Sugar Maple","Tag: 135 | Species: Sugar Maple","Tag: 136 | Species: Sugar Maple","Tag: 137 | Species: Sugar Maple","Tag: 138 | Species: Sugar Maple","Tag: 139 | Species: Staghorn Sumac","Tag: 140 | Species: Staghorn Sumac","Tag: 141 | Species: Staghorn Sumac","Tag: 142 | Species: Staghorn Sumac","Tag: 143 | Species: Staghorn Sumac","Tag: 144 | Species: Staghorn Sumac","Tag: 145 | Species: Staghorn Sumac","Tag: 146 | Species: Staghorn Sumac","Tag: 147 | Species: Eastern Cottonwood","Tag: 148 | Species: Eastern Cottonwood","Tag: 149 | Species: Black Locust","Tag: 150 | Species: Apple","Tag: 151 | Species: Apple","Tag: 152 | Species: Apple","Tag: 153 | Species: Apple","Tag: 154 | Species: Apple","Tag: 155 | Species: Apple","Tag: 156 | Species: Apple","Tag: 157 | Species: Apple","Tag: 158 | Species: Apple","Tag: 159 | Species: Apple","Tag: 160 | Species: American Basswood","Tag: 161 | Species: American Basswood","Tag: 162 | Species: American Basswood","Tag: 163 | Species: American Basswood","Tag: 164 | Species: American Basswood","Tag: 165 | Species: American Basswood","Tag: 166 | Species: American Basswood","Tag: 167 | Species: American Basswood","Tag: 168 | Species: American Basswood","Tag: 169 | Species: American Basswood","Tag: 170 | Species: River Birch","Tag: 171 | Species: River Birch","Tag: 172 | Species: River Birch","Tag: 173 | Species: River Birch","Tag: 174 | Species: River Birch","Tag: 175 | Species: River Birch","Tag: 176 | Species: River Birch","Tag: 177 | Species: River Birch","Tag: 178 | Species: River Birch","Tag: 179 | Species: River Birch","Tag: 180 | Species: White Birch","Tag: 181 | Species: White Birch","Tag: 182 | Species: White Birch","Tag: 183 | Species: White Birch","Tag: 184 | Species: White Birch","Tag: 185 | Species: White Birch","Tag: 186 | Species: White Birch","Tag: 187 | Species: White Birch","Tag: 188 | Species: White Birch","Tag: 189 | Species: White Birch","Tag: 190 | Species: Ginkgo","Tag: 191 | Species: Ginkgo","Tag: 192 | Species: Ginkgo","Tag: 193 | Species: Ginkgo","Tag: 194 | Species: Ginkgo","Tag: 195 | Species: Ginkgo","Tag: 196 | Species: Ginkgo","Tag: 197 | Species: Ginkgo","Tag: 198 | Species: Ginkgo","Tag: 199 | Species: Ginkgo"],{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"limits":{"lat":[43.00662772,43.01030525],"lng":[-78.78560262,-78.78204]}},"evals":[],"jsHooks":[]}</script>
+<pre class="r"><code>d_filtered %&gt;%
+  filter(month &gt;= 9, !is.na(leaf_drop)) %&gt;%
+  ggplot(aes(x = month, fill = leaf_drop)) +
+  geom_bar() +
+  facet_wrap(~ common_name)</code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(d_filtered, aes(x = common_name, fill = common_name)) +
+  geom_bar(position = &quot;dodge&quot;) +
+  ylab(&quot;Count of Observations&quot;) +
+  xlab(&quot;Species&quot;) +
+  coord_flip()</code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-8-2.png" width="672" /></p>
+<pre class="r"><code>d_filtered %&gt;% 
+  filter(month &gt;= 8) %&gt;%
+  ggplot(aes(x=date,
+             y=intensity,
+             group=phenophase_description,
+             col=phenophase_description))+
+  geom_point()+
+  facet_wrap(~common_name)+
+  ylim(0,100)+
+  geom_smooth(span=3)</code></pre>
 <div class="figure">
-<div id="htmlwidget-ae6fd5024e1495fe092b" style="width:576px;height:288px;" class="leaflet html-widget"></div>
-<script type="application/json" data-for="htmlwidget-ae6fd5024e1495fe092b">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addCircleMarkers","args":[[-16.1594643909484,-5.27599361725152,-3.61367443576455,23.9999844878912,-14.0144961699843,-10.6538769230247,-43.6974963638932,56.5491792093962,2.99421231262386,-52.384283747524,51.4900825638324,-38.8887407351285,56.6743217781186,-21.7524834349751,4.68647978268564,-9.30833947844803,38.4921087417752,59.1534749977291,-34.6277099568397,-33.588761407882],[-152.683445457369,-65.5774328112602,2.8669688757509,-80.9819976333529,-64.1991548147053,-146.992375692353,35.8545243088156,10.5993185564876,-155.436832001433,-139.567078175023,20.5263957381248,44.1411460284144,83.9806792326272,-68.707290943712,-130.091124577448,91.3523655105382,-143.256002627313,42.1547830011696,-48.9732355903834,-149.641364542767],[5.83236284088343,17.0187951647677,12.5179676990956,12.8143690829165,13.2063978782389,5.13165620155632,7.52341257059015,12.5135008257348,16.7539598152507,13.1494942272548,6.05920424219221,18.8581497734413,12.1523038065061,8.18919727113098,15.5409200943541,13.560209312709,15.3355022298638,7.09441388258711,6.96200327482074,10.9449817379937],null,null,{"interactive":true,"className":"","stroke":true,"color":["b","a","a","e","e","c","e","d","e","e","a","c","c","d","c","a","a","a","e","a"],"weight":5,"opacity":0.5,"fill":true,"fillColor":["b","a","a","e","e","c","e","d","e","e","a","c","c","d","c","a","a","a","e","a"],"fillOpacity":0.2},null,null,null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]},{"method":"addPopups","args":[-5.27599361725152,-65.5774328112602,"Random popup",null,null,{"maxWidth":300,"minWidth":50,"autoPan":true,"keepInView":false,"closeButton":true,"className":""}]}],"limits":{"lat":[-52.384283747524,59.1534749977291],"lng":[-155.436832001433,91.3523655105382]}},"evals":[],"jsHooks":[]}</script>
+<img src="index_files/figure-html/unnamed-chunk-9-1.png" alt="This code was generated by Professor Wilson" width="672" />
 <p class="caption">
-Map of completely random data
+This code was generated by Professor Wilson
 </p>
 </div>
-<pre class="r"><code>data %&gt;% 
-  ggplot(aes(x=x,y=y,col=category))+
-  geom_point()</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 </div>
 <div id="conclusions" class="section level1">
 <h1>Conclusions</h1>
-<p>What have you learned? Are there any broader implications?</p>
+<p>In the data, we are able to see that in Citizen Science, there can be a lot of variability in observations. It’s interesting to see how data is collected from other individuals and how it contributes to a bigger picture. We can see from the graphs that although most leaves typically drop around October, some trees don’t drop their leaves until much later in the year. Citizen Science is very useful in terms of getting young scientists involved and helping to contribute data to solving a bigger problem. One of the main drawbacks of using citizen science data is the large variation in observations as shown in the table above. Even looking at one particular tag, we can see the huge amount of variation in observations between the different participants. This has implications in our interpretation of these results. We have to keep in mind that because there is such wide variation in amount of observations made and the actual data from the observations that we can not imply causation.</p>
 </div>
 <div id="references" class="section level1">
 <h1>References</h1>
+<p>Professor Wilson | National Phenology Network</p>
 </div>
 
 <!-- give the footer some space -->
@@ -689,6 +7514,11 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
 <script>
 $(document).ready(function ()  {
