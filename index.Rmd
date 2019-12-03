@@ -197,4 +197,6 @@ In the data, we are able to see that in Citizen Science, there can be a lot of v
 
 # References
 Professor Wilson | 
-National Phenology Network
+National Phenology Network |
+Stackoverflow (code) |
+Rstudio documentation
