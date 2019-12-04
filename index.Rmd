@@ -49,6 +49,8 @@ knitr::opts_chunk$set(cache=TRUE)  ##cache the results for quick compiling
 
 ## Download and clean all required data
 ```{r, warning=FALSE, message=FALSE}
+#npn_groups() %>% filter(grepl("Buffalo",network_name)) <- Identifies network ID
+
 d=npn_download_status_data("Testing",
                            years=c('2019'),
                            additional_fields=list("Plant_Nickname",
@@ -106,6 +108,8 @@ trees <- trees %>%
   ))
 ```
 
+##### To download the data that is being stored on another server, we must remember to install the 'rnpn' package from github and put in the correct 'network id'
+
 # Exploratory Data Analysis
 ```{r,warning=FALSE, message=FALSE, results='asis', fig.cap="The table above shows the percentage of observations of each tree."}
 table <- prop.table(table(d$common_name)) * 100
@@ -113,6 +117,8 @@ table %>%
   kable(col.names = c("Common Name","Percentage of Observations"), digits = 2) %>% kable_styling(full_width = FALSE, fixed_thead = TRUE) %>%
   scroll_box(width = "500px", height = "200px", fixed_thead = TRUE)
 ```
+
+##### The table above shows the proportion of observations for each tree. This helps show what trees contributed to most of the observations.
 
 ```{r,warning=FALSE, message=FALSE, results='asis', fig.cap = "The above looks at the mean and variance of each tagged tree."}
 d_filtered %>%
@@ -123,16 +129,20 @@ d_filtered %>%
   kable(digits = 2, col.names = c("Name","Month","Intensity Variance","Intensity Average")) %>% kable_styling() %>% scroll_box(width = "500px", height = "200px")
 ```
 
+##### The table above shows the variance in observations for the same species of trees and how they differ from month to month. This shows that even though students are looking at the same tree, they're opinion is different.
+
 ```{r,warning=FALSE, message=FALSE, results='asis', fig.cap="This table is just to show how much variability there is in Citizen Science."}
 d_filtered %>%
-  group_by(tag,observedby_person_id) %>%
+  group_by(tag,observedby_person_id, month) %>%
   summarize(var_intensity = var(intensity,na.rm = TRUE)) %>%
   filter(var_intensity != 0) %>%
   kable(digits = 2,
-        col.names = c("Tag ID","Person ID","Intensity Variance")) %>%
+        col.names = c("Tag ID","Person ID","Month","Intensity Variance")) %>%
   kable_styling() %>%
   scroll_box(width = "500px", height = "200px")
 ```
+
+##### This table above, shows that for the same tree observed by the same person there can be huge variation in observations from week to week. This is a main drawback from collecting data from Citizen Scientists. 
 
 ```{r, fig.cap="The above graphs depict how we would expect the average tree coverage to continuously decline but for some, it actually increases."}
 d_filtered %>%
@@ -146,7 +156,7 @@ d_filtered %>%
 ```
 
 # Results
-```{r, fig.width=6, fig.height=3}
+```{r, fig.width=6, fig.height=3, fig.cap="This is an interactive leaflet map to show the different trees around campus. Shown for each marker is the common name and the tag number."}
 ##Making Icons
 icons <- awesomeIcons(
   icon = 'ios-close',
@@ -164,13 +174,15 @@ leaflet(trees) %>%
 ```
 
 
-```{r, warning=FALSE, message=FALSE}
+```{r, warning=FALSE, message=FALSE, fig.cap="The graph pictured above shows the proportion of observations for each tree each month to see the percentage of observations that have been declared as leaves dropped. The decision was made that any tree with an intensity less than 50% has been declared as their leaves being dropped."}
 d_filtered %>%
   filter(month >= 9, !is.na(leaf_drop)) %>%
   ggplot(aes(x = month, fill = leaf_drop)) +
   geom_bar(position = "fill") +
   facet_wrap(~ common_name)
+```
 
+```{r, warning = FALSE, message=FALSE, fig.cap="The bar chart above shows the raw count of observations made for each tree."}
 ggplot(d_filtered, aes(x = common_name, fill = common_name)) +
   geom_bar(position = "dodge") +
   ylab("Count of Observations") +
@@ -178,7 +190,7 @@ ggplot(d_filtered, aes(x = common_name, fill = common_name)) +
   coord_flip()
 ```
 
-```{r, warning=FALSE, message=FALSE, fig.cap = "This graph was generated with help from Professor Wilson"}
+```{r, warning=FALSE, message=FALSE, fig.cap = "This graph was generated with help from Professor Wilson. This graph shows the trend in when leaves start to become colored and we have a smoothing line to indicate the speed at which they change colors."}
 d_filtered %>% 
   filter(month >= 8) %>%
   ggplot(aes(x=date,
