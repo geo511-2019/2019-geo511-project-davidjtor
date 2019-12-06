@@ -11,17 +11,18 @@ For my project, I'm looking at ecological data, specifically about a variety of 
 
 Collecting the data:
 
-* Students were assigned up to four designated trees.
-* Each tree was identified and assigned a tag.
-* Students had to be make 4 observations a week (one for each tree)
-* Students then input data into app which is then recorded in the database.
+* Students are enrolled in undergrad Environmental Science class.
+* Students were assigned up to four trees around campus.
+* Each tree was identified and assigned a tag by the professor.
+* Students had to be make 4 observations a week (one for each tree).
+* Students then input data into an app which is then recorded in the database.
 
 Running the analysis:
 
 * Install/Download the appropriate libraries
 * Retrieve the data that is stored online using UB's network ID.
-* Pull the two data sources together and perform some exploratory analysis.
-* Create some tables that can be used for analysis.
+* Pull the two data sources together (student's data and tree's data) and perform some exploratory analysis.
+* Create some exploratory tables that can be used for analysis.
 * Generate some graphs that show some interesting finds about the data.
 
 Load all packages (you may need to install some packages):
@@ -46,6 +47,8 @@ library(widgetframe)
 library(DT)
 knitr::opts_chunk$set(cache=TRUE)  ##cache the results for quick compiling
 ```
+
+##### When you run the code to install the libraries, make sure to uncomment the install the 'rnpn' library from github so in the next chunk, you will be able to retrieve the data.
 
 ## Download and clean all required data
 ```{r, warning=FALSE, message=FALSE}
@@ -108,7 +111,7 @@ trees <- trees %>%
   ))
 ```
 
-##### To download the data that is being stored on another server, we must remember to install the 'rnpn' package from github and put in the correct 'network id'
+##### To download the data that is being stored on another server, we must remember to install the 'rnpn' package from github listed above and put in the correct 'network id'
 
 # Exploratory Data Analysis
 ```{r,warning=FALSE, message=FALSE, results='asis', fig.cap="The table above shows the percentage of observations of each tree."}
@@ -118,7 +121,7 @@ table %>%
   scroll_box(width = "500px", height = "200px", fixed_thead = TRUE)
 ```
 
-##### The table above shows the proportion of observations for each tree. This helps show what trees contributed to most of the observations.
+##### The table above shows the proportion of observations for each tree. This helps show what trees contributed to most of the observations. We can easily see that the tree with the most observations is the 'Sugar Maple' while the tree that was the least common was the 'Canada Goose'.
 
 ```{r,warning=FALSE, message=FALSE, results='asis', fig.cap = "The above looks at the mean and variance of each tagged tree."}
 d_filtered %>%
@@ -129,9 +132,9 @@ d_filtered %>%
   kable(digits = 2, col.names = c("Name","Month","Intensity Variance","Intensity Average")) %>% kable_styling() %>% scroll_box(width = "500px", height = "200px")
 ```
 
-##### The table above shows the variance in observations for the same species of trees and how they differ from month to month. This shows that even though students are looking at the same tree, they're opinion is different.
+##### The table above shows the variance in observations for the same species of trees and how they differ from month to month. This shows that even though students are looking at the same tree, the observer may see the tree differently.
 
-```{r,warning=FALSE, message=FALSE, results='asis', fig.cap="This table is just to show how much variability there is in Citizen Science."}
+```{r,warning=FALSE, message=FALSE, results='asis', fig.cap="This table is to show how much variability there is in Citizen Science."}
 d_filtered %>%
   group_by(tag,observedby_person_id, month) %>%
   summarize(var_intensity = var(intensity,na.rm = TRUE)) %>%
@@ -144,7 +147,7 @@ d_filtered %>%
 
 ##### This table above, shows that for the same tree observed by the same person there can be huge variation in observations from week to week. This is a main drawback from collecting data from Citizen Scientists. 
 
-```{r, fig.cap="The above graphs depict how we would expect the average tree coverage to continuously decline but for some, it actually increases."}
+```{r, fig.cap="The above set of graphs depicts the average tree coverage (intensity) from month to month for each species of tree. We would expect the tree coverage to decrease almost linearly, however we can see that's not the case. For some, the tree coverage was reported to increase in the colder months."}
 d_filtered %>%
   group_by(common_name, month) %>%
   filter(month >= 9) %>%
@@ -206,6 +209,8 @@ d_filtered %>%
 # Conclusions
 In the data, we are able to see that in Citizen Science, there can be a lot of variability in observations. It's interesting to see how data is collected from other individuals and how it contributes to a bigger picture. We can see from the graphs that although most leaves typically drop around October, some trees don't drop their leaves until much later in the year. Citizen Science is very useful in terms of getting young scientists involved and helping to contribute data to solving a bigger problem. One of the main drawbacks of using citizen science data is the large variation in observations as shown in the table above. Even looking at one particular tag, we can see the huge amount of variation in observations between the different participants. This has implications in our interpretation of these results. We have to keep in mind that because there is such wide variation in amount of observations made and the actual data from the observations that we can not imply causation.
 
+# Future Work
+For work in the future, it would be neat to collect this data again next year and see how characteristics of the trees changed from year to year. It would also be neat to compare variation metrics between the different years of students. I think another next step would be to incorporate state level ecological data and see if trees in Western New York are different than those in other places of New York due to the differences in climate. 
 
 # References
 Professor Wilson | 

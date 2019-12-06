@@ -397,17 +397,18 @@ div.tocify {
 <h1>Materials and methods</h1>
 <p>Collecting the data:</p>
 <ul>
-<li>Students were assigned up to four designated trees.</li>
-<li>Each tree was identified and assigned a tag.</li>
-<li>Students had to be make 4 observations a week (one for each tree)</li>
-<li>Students then input data into app which is then recorded in the database.</li>
+<li>Students are enrolled in undergrad Environmental Science class.</li>
+<li>Students were assigned up to four trees around campus.</li>
+<li>Each tree was identified and assigned a tag by the professor.</li>
+<li>Students had to be make 4 observations a week (one for each tree).</li>
+<li>Students then input data into an app which is then recorded in the database.</li>
 </ul>
 <p>Running the analysis:</p>
 <ul>
 <li>Install/Download the appropriate libraries</li>
 <li>Retrieve the data that is stored online using UB’s network ID.</li>
-<li>Pull the two data sources together and perform some exploratory analysis.</li>
-<li>Create some tables that can be used for analysis.</li>
+<li>Pull the two data sources together (student’s data and tree’s data) and perform some exploratory analysis.</li>
+<li>Create some exploratory tables that can be used for analysis.</li>
 <li>Generate some graphs that show some interesting finds about the data.</li>
 </ul>
 <p>Load all packages (you may need to install some packages):</p>
@@ -429,6 +430,9 @@ library(broom)
 library(widgetframe)
 library(DT)
 knitr::opts_chunk$set(cache=TRUE)  ##cache the results for quick compiling</code></pre>
+<div id="when-you-run-the-code-to-install-the-libraries-make-sure-to-uncomment-the-install-the-rnpn-library-from-github-so-in-the-next-chunk-you-will-be-able-to-retrieve-the-data." class="section level5">
+<h5>When you run the code to install the libraries, make sure to uncomment the install the ‘rnpn’ library from github so in the next chunk, you will be able to retrieve the data.</h5>
+</div>
 <div id="download-and-clean-all-required-data" class="section level2">
 <h2>Download and clean all required data</h2>
 <pre class="r"><code>#npn_groups() %&gt;% filter(grepl(&quot;Buffalo&quot;,network_name)) &lt;- Identifies network ID
@@ -488,8 +492,8 @@ trees &lt;- trees %&gt;%
     common_name == &quot;White Birch&quot; ~ &quot;cadetblue&quot;,
     common_name == &quot;Ginkgo&quot; ~ &quot;lightgray&quot;
   ))</code></pre>
-<div id="to-download-the-data-that-is-being-stored-on-another-server-we-must-remember-to-install-the-rnpn-package-from-github-and-put-in-the-correct-network-id" class="section level5">
-<h5>To download the data that is being stored on another server, we must remember to install the ‘rnpn’ package from github and put in the correct ‘network id’</h5>
+<div id="to-download-the-data-that-is-being-stored-on-another-server-we-must-remember-to-install-the-rnpn-package-from-github-listed-above-and-put-in-the-correct-network-id" class="section level5">
+<h5>To download the data that is being stored on another server, we must remember to install the ‘rnpn’ package from github listed above and put in the correct ‘network id’</h5>
 </div>
 </div>
 </div>
@@ -627,8 +631,8 @@ sugar maple
 </tbody>
 </table>
 </div>
-<div id="the-table-above-shows-the-proportion-of-observations-for-each-tree.-this-helps-show-what-trees-contributed-to-most-of-the-observations." class="section level5">
-<h5>The table above shows the proportion of observations for each tree. This helps show what trees contributed to most of the observations.</h5>
+<div id="the-table-above-shows-the-proportion-of-observations-for-each-tree.-this-helps-show-what-trees-contributed-to-most-of-the-observations.-we-can-easily-see-that-the-tree-with-the-most-observations-is-the-sugar-maple-while-the-tree-that-was-the-least-common-was-the-canada-goose." class="section level5">
+<h5>The table above shows the proportion of observations for each tree. This helps show what trees contributed to most of the observations. We can easily see that the tree with the most observations is the ‘Sugar Maple’ while the tree that was the least common was the ‘Canada Goose’.</h5>
 <pre class="r"><code>d_filtered %&gt;%
   group_by(common_name, month) %&gt;%
   summarize(var_intensity = var(intensity,na.rm = TRUE),
@@ -1218,8 +1222,8 @@ sugar maple
 </table>
 </div>
 </div>
-<div id="the-table-above-shows-the-variance-in-observations-for-the-same-species-of-trees-and-how-they-differ-from-month-to-month.-this-shows-that-even-though-students-are-looking-at-the-same-tree-theyre-opinion-is-different." class="section level5">
-<h5>The table above shows the variance in observations for the same species of trees and how they differ from month to month. This shows that even though students are looking at the same tree, they’re opinion is different.</h5>
+<div id="the-table-above-shows-the-variance-in-observations-for-the-same-species-of-trees-and-how-they-differ-from-month-to-month.-this-shows-that-even-though-students-are-looking-at-the-same-tree-the-observer-may-see-the-tree-differently." class="section level5">
+<h5>The table above shows the variance in observations for the same species of trees and how they differ from month to month. This shows that even though students are looking at the same tree, the observer may see the tree differently.</h5>
 <pre class="r"><code>d_filtered %&gt;%
   group_by(tag,observedby_person_id, month) %&gt;%
   summarize(var_intensity = var(intensity,na.rm = TRUE)) %&gt;%
@@ -1266,6 +1270,20 @@ Intensity Variance
 101
 </td>
 <td style="text-align:right;">
+49464
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+4512.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+101
+</td>
+<td style="text-align:right;">
 49468
 </td>
 <td style="text-align:right;">
@@ -1300,7 +1318,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-280.40
+302.70
 </td>
 </tr>
 <tr>
@@ -1510,7 +1528,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-1830.12
+1800.40
 </td>
 </tr>
 <tr>
@@ -1552,7 +1570,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-168.75
+238.54
 </td>
 </tr>
 <tr>
@@ -1664,7 +1682,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-280.40
+302.70
 </td>
 </tr>
 <tr>
@@ -1818,7 +1836,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-1830.12
+2213.40
 </td>
 </tr>
 <tr>
@@ -1860,7 +1878,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-706.42
+792.27
 </td>
 </tr>
 <tr>
@@ -1944,7 +1962,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-280.40
+302.70
 </td>
 </tr>
 <tr>
@@ -2084,7 +2102,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-630.12
+1546.23
 </td>
 </tr>
 <tr>
@@ -2126,7 +2144,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-217.56
+555.57
 </td>
 </tr>
 <tr>
@@ -2196,7 +2214,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-1021.67
+1232.20
 </td>
 </tr>
 <tr>
@@ -2350,7 +2368,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-280.40
+302.70
 </td>
 </tr>
 <tr>
@@ -2392,7 +2410,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-2503.50
+2433.71
 </td>
 </tr>
 <tr>
@@ -2504,7 +2522,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-1830.12
+2213.40
 </td>
 </tr>
 <tr>
@@ -2546,7 +2564,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-315.06
+558.57
 </td>
 </tr>
 <tr>
@@ -2602,7 +2620,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-753.54
+1060.03
 </td>
 </tr>
 <tr>
@@ -2756,7 +2774,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-1609.44
+1642.21
 </td>
 </tr>
 <tr>
@@ -2798,7 +2816,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-135.00
+108.48
 </td>
 </tr>
 <tr>
@@ -2910,7 +2928,7 @@ Intensity Variance
 9
 </td>
 <td style="text-align:right;">
-253.12
+168.75
 </td>
 </tr>
 <tr>
@@ -2938,7 +2956,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-816.88
+1182.06
 </td>
 </tr>
 <tr>
@@ -3092,7 +3110,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-1609.44
+1642.21
 </td>
 </tr>
 <tr>
@@ -3134,7 +3152,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-245.40
+204.91
 </td>
 </tr>
 <tr>
@@ -3246,7 +3264,7 @@ Intensity Variance
 9
 </td>
 <td style="text-align:right;">
-253.12
+168.75
 </td>
 </tr>
 <tr>
@@ -3274,7 +3292,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-991.88
+1232.20
 </td>
 </tr>
 <tr>
@@ -3442,7 +3460,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-1061.24
+856.32
 </td>
 </tr>
 <tr>
@@ -3484,7 +3502,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-245.40
+204.91
 </td>
 </tr>
 <tr>
@@ -3638,7 +3656,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-1061.24
+856.32
 </td>
 </tr>
 <tr>
@@ -3680,7 +3698,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-135.00
+108.48
 </td>
 </tr>
 <tr>
@@ -3806,7 +3824,7 @@ Intensity Variance
 9
 </td>
 <td style="text-align:right;">
-312.50
+208.33
 </td>
 </tr>
 <tr>
@@ -3968,6 +3986,20 @@ Intensity Variance
 113
 </td>
 <td style="text-align:right;">
+49653
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+2503.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+113
+</td>
+<td style="text-align:right;">
 49695
 </td>
 <td style="text-align:right;">
@@ -3975,6 +4007,20 @@ Intensity Variance
 </td>
 <td style="text-align:right;">
 894.75
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+113
+</td>
+<td style="text-align:right;">
+49695
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+72.00
 </td>
 </tr>
 <tr>
@@ -4164,6 +4210,20 @@ Intensity Variance
 114
 </td>
 <td style="text-align:right;">
+49653
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+2664.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+114
+</td>
+<td style="text-align:right;">
 49695
 </td>
 <td style="text-align:right;">
@@ -4198,7 +4258,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-72.00
+48.00
 </td>
 </tr>
 <tr>
@@ -4353,6 +4413,20 @@ Intensity Variance
 </td>
 <td style="text-align:right;">
 841.13
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+115
+</td>
+<td style="text-align:right;">
+49653
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+3008.33
 </td>
 </tr>
 <tr>
@@ -4912,7 +4986,7 @@ Intensity Variance
 10
 </td>
 <td style="text-align:right;">
-253.12
+672.29
 </td>
 </tr>
 <tr>
@@ -5010,7 +5084,21 @@ Intensity Variance
 10
 </td>
 <td style="text-align:right;">
-253.12
+672.29
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+119
+</td>
+<td style="text-align:right;">
+49966
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+24.00
 </td>
 </tr>
 <tr>
@@ -5220,7 +5308,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-1830.12
+1800.40
 </td>
 </tr>
 <tr>
@@ -5430,7 +5518,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-1830.12
+1800.40
 </td>
 </tr>
 <tr>
@@ -5864,7 +5952,7 @@ Intensity Variance
 10
 </td>
 <td style="text-align:right;">
-253.12
+614.24
 </td>
 </tr>
 <tr>
@@ -5914,6 +6002,20 @@ Intensity Variance
 125
 </td>
 <td style="text-align:right;">
+49693
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+4512.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+125
+</td>
+<td style="text-align:right;">
 49966
 </td>
 <td style="text-align:right;">
@@ -5934,7 +6036,7 @@ Intensity Variance
 10
 </td>
 <td style="text-align:right;">
-253.12
+614.24
 </td>
 </tr>
 <tr>
@@ -6075,6 +6177,20 @@ Intensity Variance
 </td>
 <td style="text-align:right;">
 860.60
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+126
+</td>
+<td style="text-align:right;">
+49620
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+376.56
 </td>
 </tr>
 <tr>
@@ -6242,7 +6358,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-1830.12
+1800.40
 </td>
 </tr>
 <tr>
@@ -6726,6 +6842,20 @@ Intensity Variance
 130
 </td>
 <td style="text-align:right;">
+49653
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+4512.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+130
+</td>
+<td style="text-align:right;">
 49695
 </td>
 <td style="text-align:right;">
@@ -6760,7 +6890,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-312.50
+104.17
 </td>
 </tr>
 <tr>
@@ -6872,7 +7002,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-630.12
+1546.23
 </td>
 </tr>
 <tr>
@@ -6914,7 +7044,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-1961.33
+1553.00
 </td>
 </tr>
 <tr>
@@ -7188,6 +7318,20 @@ Intensity Variance
 132
 </td>
 <td style="text-align:right;">
+49840
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+2664.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+132
+</td>
+<td style="text-align:right;">
 50194
 </td>
 <td style="text-align:right;">
@@ -7222,7 +7366,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-1961.33
+1553.00
 </td>
 </tr>
 <tr>
@@ -7306,7 +7450,7 @@ Intensity Variance
 9
 </td>
 <td style="text-align:right;">
-3008.33
+2494.30
 </td>
 </tr>
 <tr>
@@ -7320,7 +7464,7 @@ Intensity Variance
 10
 </td>
 <td style="text-align:right;">
-2450.00
+1112.20
 </td>
 </tr>
 <tr>
@@ -7516,7 +7660,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-451.67
+1059.32
 </td>
 </tr>
 <tr>
@@ -7600,7 +7744,21 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-208.33
+1378.64
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+135
+</td>
+<td style="text-align:right;">
+49564
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+3362.00
 </td>
 </tr>
 <tr>
@@ -7769,6 +7927,34 @@ Intensity Variance
 </td>
 <td style="text-align:right;">
 1609.44
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+136
+</td>
+<td style="text-align:right;">
+49484
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+1666.87
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+136
+</td>
+<td style="text-align:right;">
+49564
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+4512.50
 </td>
 </tr>
 <tr>
@@ -7964,7 +8150,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-1266.42
+1664.37
 </td>
 </tr>
 <tr>
@@ -8090,7 +8276,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-2296.33
+2066.70
 </td>
 </tr>
 <tr>
@@ -8104,7 +8290,7 @@ Intensity Variance
 10
 </td>
 <td style="text-align:right;">
-1516.05
+1304.64
 </td>
 </tr>
 <tr>
@@ -8118,7 +8304,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-4512.50
+3008.33
 </td>
 </tr>
 <tr>
@@ -8216,7 +8402,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-1918.73
+2061.44
 </td>
 </tr>
 <tr>
@@ -8230,7 +8416,7 @@ Intensity Variance
 9
 </td>
 <td style="text-align:right;">
-3008.33
+2488.67
 </td>
 </tr>
 <tr>
@@ -8244,7 +8430,7 @@ Intensity Variance
 10
 </td>
 <td style="text-align:right;">
-1089.06
+1112.20
 </td>
 </tr>
 <tr>
@@ -8370,7 +8556,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-3008.33
+2707.50
 </td>
 </tr>
 <tr>
@@ -8384,7 +8570,7 @@ Intensity Variance
 10
 </td>
 <td style="text-align:right;">
-1629.36
+1320.18
 </td>
 </tr>
 <tr>
@@ -8398,7 +8584,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-1830.12
+2213.40
 </td>
 </tr>
 <tr>
@@ -8482,7 +8668,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-1800.40
+2099.50
 </td>
 </tr>
 <tr>
@@ -8496,7 +8682,21 @@ Intensity Variance
 9
 </td>
 <td style="text-align:right;">
-1480.05
+1400.75
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+139
+</td>
+<td style="text-align:right;">
+49564
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+1128.12
 </td>
 </tr>
 <tr>
@@ -8664,7 +8864,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-1800.40
+2018.78
 </td>
 </tr>
 <tr>
@@ -8678,7 +8878,21 @@ Intensity Variance
 9
 </td>
 <td style="text-align:right;">
-1480.05
+1400.75
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+140
+</td>
+<td style="text-align:right;">
+49564
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+1128.12
 </td>
 </tr>
 <tr>
@@ -9266,7 +9480,35 @@ Intensity Variance
 9
 </td>
 <td style="text-align:right;">
-1128.12
+676.88
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+145
+</td>
+<td style="text-align:right;">
+49556
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+276.58
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+145
+</td>
+<td style="text-align:right;">
+49556
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+3444.50
 </td>
 </tr>
 <tr>
@@ -9351,6 +9593,20 @@ Intensity Variance
 </td>
 <td style="text-align:right;">
 178.57
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+145
+</td>
+<td style="text-align:right;">
+49659
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+38.40
 </td>
 </tr>
 <tr>
@@ -9476,7 +9732,35 @@ Intensity Variance
 9
 </td>
 <td style="text-align:right;">
-1770.12
+1062.08
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+146
+</td>
+<td style="text-align:right;">
+49556
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+411.02
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+146
+</td>
+<td style="text-align:right;">
+49556
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+3444.50
 </td>
 </tr>
 <tr>
@@ -9582,6 +9866,20 @@ Intensity Variance
 146
 </td>
 <td style="text-align:right;">
+49659
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+38.40
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+146
+</td>
+<td style="text-align:right;">
 49661
 </td>
 <td style="text-align:right;">
@@ -9644,7 +9942,35 @@ Intensity Variance
 9
 </td>
 <td style="text-align:right;">
-4512.50
+2707.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+147
+</td>
+<td style="text-align:right;">
+49556
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+1524.46
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+147
+</td>
+<td style="text-align:right;">
+49556
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+1830.12
 </td>
 </tr>
 <tr>
@@ -9736,6 +10062,20 @@ Intensity Variance
 147
 </td>
 <td style="text-align:right;">
+49659
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+38.40
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+147
+</td>
+<td style="text-align:right;">
 49661
 </td>
 <td style="text-align:right;">
@@ -9812,7 +10152,35 @@ Intensity Variance
 9
 </td>
 <td style="text-align:right;">
-4512.50
+2707.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+148
+</td>
+<td style="text-align:right;">
+49556
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+1524.46
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+148
+</td>
+<td style="text-align:right;">
+49556
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+1830.12
 </td>
 </tr>
 <tr>
@@ -9897,6 +10265,20 @@ Intensity Variance
 </td>
 <td style="text-align:right;">
 396.43
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+148
+</td>
+<td style="text-align:right;">
+49659
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+38.40
 </td>
 </tr>
 <tr>
@@ -10106,7 +10488,7 @@ Intensity Variance
 9
 </td>
 <td style="text-align:right;">
-396.75
+654.58
 </td>
 </tr>
 <tr>
@@ -10120,7 +10502,7 @@ Intensity Variance
 10
 </td>
 <td style="text-align:right;">
-1770.12
+680.05
 </td>
 </tr>
 <tr>
@@ -10232,7 +10614,7 @@ Intensity Variance
 9
 </td>
 <td style="text-align:right;">
-1180.08
+1062.07
 </td>
 </tr>
 <tr>
@@ -10246,7 +10628,7 @@ Intensity Variance
 10
 </td>
 <td style="text-align:right;">
-1770.12
+680.05
 </td>
 </tr>
 <tr>
@@ -10330,7 +10712,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-896.67
+1200.86
 </td>
 </tr>
 <tr>
@@ -10428,7 +10810,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-1560.50
+1666.87
 </td>
 </tr>
 <tr>
@@ -10554,7 +10936,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-3008.33
+2707.50
 </td>
 </tr>
 <tr>
@@ -10568,7 +10950,21 @@ Intensity Variance
 10
 </td>
 <td style="text-align:right;">
-944.07
+948.28
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+152
+</td>
+<td style="text-align:right;">
+49971
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+4512.50
 </td>
 </tr>
 <tr>
@@ -10652,7 +11048,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-1560.50
+1850.07
 </td>
 </tr>
 <tr>
@@ -10764,7 +11160,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-4512.50
+2707.50
 </td>
 </tr>
 <tr>
@@ -10778,7 +11174,21 @@ Intensity Variance
 10
 </td>
 <td style="text-align:right;">
-944.07
+948.28
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+153
+</td>
+<td style="text-align:right;">
+49971
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+4512.50
 </td>
 </tr>
 <tr>
@@ -11254,7 +11664,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-2450.00
+1835.27
 </td>
 </tr>
 <tr>
@@ -11352,7 +11762,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-2450.00
+1835.27
 </td>
 </tr>
 <tr>
@@ -11436,7 +11846,7 @@ Intensity Variance
 10
 </td>
 <td style="text-align:right;">
-312.50
+208.33
 </td>
 </tr>
 <tr>
@@ -11576,7 +11986,7 @@ Intensity Variance
 10
 </td>
 <td style="text-align:right;">
-312.50
+208.33
 </td>
 </tr>
 <tr>
@@ -11646,7 +12056,35 @@ Intensity Variance
 9
 </td>
 <td style="text-align:right;">
-595.12
+396.75
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+162
+</td>
+<td style="text-align:right;">
+49477
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+203.79
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+162
+</td>
+<td style="text-align:right;">
+49477
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+253.12
 </td>
 </tr>
 <tr>
@@ -11759,6 +12197,48 @@ Intensity Variance
 </td>
 <td style="text-align:right;">
 1949.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+163
+</td>
+<td style="text-align:right;">
+49477
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1180.08
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+163
+</td>
+<td style="text-align:right;">
+49477
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+471.67
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+163
+</td>
+<td style="text-align:right;">
+49477
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+253.12
 </td>
 </tr>
 <tr>
@@ -12276,7 +12756,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-253.12
+1500.06
 </td>
 </tr>
 <tr>
@@ -12466,6 +12946,20 @@ Intensity Variance
 167
 </td>
 <td style="text-align:right;">
+49694
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+1681.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+167
+</td>
+<td style="text-align:right;">
 49700
 </td>
 <td style="text-align:right;">
@@ -12487,6 +12981,48 @@ Intensity Variance
 </td>
 <td style="text-align:right;">
 451.67
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+168
+</td>
+<td style="text-align:right;">
+49435
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1722.25
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+168
+</td>
+<td style="text-align:right;">
+49435
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+1059.14
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+168
+</td>
+<td style="text-align:right;">
+49435
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+1577.78
 </td>
 </tr>
 <tr>
@@ -12606,6 +13142,48 @@ Intensity Variance
 169
 </td>
 <td style="text-align:right;">
+49435
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+3008.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+169
+</td>
+<td style="text-align:right;">
+49435
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+932.92
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+169
+</td>
+<td style="text-align:right;">
+49435
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+1770.70
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+169
+</td>
+<td style="text-align:right;">
 49465
 </td>
 <td style="text-align:right;">
@@ -12626,7 +13204,7 @@ Intensity Variance
 9
 </td>
 <td style="text-align:right;">
-2450.00
+1633.33
 </td>
 </tr>
 <tr>
@@ -13018,7 +13596,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-2450.00
+1835.27
 </td>
 </tr>
 <tr>
@@ -13116,7 +13694,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-2450.00
+1835.27
 </td>
 </tr>
 <tr>
@@ -13172,7 +13750,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-1413.38
+1798.40
 </td>
 </tr>
 <tr>
@@ -13331,6 +13909,20 @@ Intensity Variance
 </tr>
 <tr>
 <td style="text-align:right;">
+174
+</td>
+<td style="text-align:right;">
+49690
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+1584.67
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
 175
 </td>
 <td style="text-align:right;">
@@ -13382,7 +13974,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-1234.90
+1922.80
 </td>
 </tr>
 <tr>
@@ -13551,6 +14143,20 @@ Intensity Variance
 </td>
 <td style="text-align:right;">
 3444.50
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+175
+</td>
+<td style="text-align:right;">
+49690
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+1584.67
 </td>
 </tr>
 <tr>
@@ -13872,7 +14478,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-168.75
+226.77
 </td>
 </tr>
 <tr>
@@ -14026,7 +14632,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-168.75
+226.77
 </td>
 </tr>
 <tr>
@@ -14362,7 +14968,21 @@ Intensity Variance
 9
 </td>
 <td style="text-align:right;">
-72.00
+48.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+182
+</td>
+<td style="text-align:right;">
+49477
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+34.29
 </td>
 </tr>
 <tr>
@@ -14516,7 +15136,21 @@ Intensity Variance
 9
 </td>
 <td style="text-align:right;">
-595.12
+396.75
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+183
+</td>
+<td style="text-align:right;">
+49477
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+152.04
 </td>
 </tr>
 <tr>
@@ -14670,7 +15304,7 @@ Intensity Variance
 9
 </td>
 <td style="text-align:right;">
-1736.58
+1736.57
 </td>
 </tr>
 <tr>
@@ -14852,7 +15486,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-1000.17
+968.94
 </td>
 </tr>
 <tr>
@@ -14936,7 +15570,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-1000.17
+968.94
 </td>
 </tr>
 <tr>
@@ -14958,6 +15592,34 @@ Intensity Variance
 188
 </td>
 <td style="text-align:right;">
+49435
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+721.88
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+188
+</td>
+<td style="text-align:right;">
+49435
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+1236.82
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+188
+</td>
+<td style="text-align:right;">
 49465
 </td>
 <td style="text-align:right;">
@@ -14965,6 +15627,20 @@ Intensity Variance
 </td>
 <td style="text-align:right;">
 1681.00
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+188
+</td>
+<td style="text-align:right;">
+49578
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+3008.33
 </td>
 </tr>
 <tr>
@@ -15056,6 +15732,34 @@ Intensity Variance
 189
 </td>
 <td style="text-align:right;">
+49435
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+753.54
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+189
+</td>
+<td style="text-align:right;">
+49435
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+1134.75
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+189
+</td>
+<td style="text-align:right;">
 49465
 </td>
 <td style="text-align:right;">
@@ -15063,6 +15767,20 @@ Intensity Variance
 </td>
 <td style="text-align:right;">
 2241.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+189
+</td>
+<td style="text-align:right;">
+49578
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+3008.33
 </td>
 </tr>
 <tr>
@@ -15300,7 +16018,7 @@ Intensity Variance
 10
 </td>
 <td style="text-align:right;">
-504.43
+824.93
 </td>
 </tr>
 <tr>
@@ -15454,7 +16172,7 @@ Intensity Variance
 10
 </td>
 <td style="text-align:right;">
-504.43
+824.93
 </td>
 </tr>
 <tr>
@@ -15706,7 +16424,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-920.83
+1389.34
 </td>
 </tr>
 <tr>
@@ -15837,6 +16555,20 @@ Intensity Variance
 </tr>
 <tr>
 <td style="text-align:right;">
+194
+</td>
+<td style="text-align:right;">
+49690
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+1982.20
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
 195
 </td>
 <td style="text-align:right;">
@@ -15888,7 +16620,7 @@ Intensity Variance
 11
 </td>
 <td style="text-align:right;">
-1949.33
+1989.36
 </td>
 </tr>
 <tr>
@@ -16029,6 +16761,20 @@ Intensity Variance
 </td>
 <td style="text-align:right;">
 1830.12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+195
+</td>
+<td style="text-align:right;">
+49690
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+1982.20
 </td>
 </tr>
 <tr>
@@ -16451,10 +17197,11 @@ Intensity Variance
   ggplot(aes(x = month, y = mean_intensity)) +
   geom_line() + facet_wrap(~ common_name) +
   ylab(&quot;Average Tree Coverage&quot;)</code></pre>
+<pre><code>## Warning: Removed 1 rows containing missing values (geom_path).</code></pre>
 <div class="figure">
-<img src="index_files/figure-html/unnamed-chunk-6-1.png" alt="The above graphs depict how we would expect the average tree coverage to continuously decline but for some, it actually increases." width="672" />
+<img src="index_files/figure-html/unnamed-chunk-6-1.png" alt="The above set of graphs depicts the average tree coverage (intensity) from month to month for each species of tree. We would expect the tree coverage to decrease almost linearly, however we can see that's not the case. For some, the tree coverage was reported to increase in the colder months." width="672" />
 <p class="caption">
-The above graphs depict how we would expect the average tree coverage to continuously decline but for some, it actually increases.
+The above set of graphs depicts the average tree coverage (intensity) from month to month for each species of tree. We would expect the tree coverage to decrease almost linearly, however we can see that’s not the case. For some, the tree coverage was reported to increase in the colder months.
 </p>
 </div>
 </div>
@@ -16524,6 +17271,10 @@ This graph was generated with help from Professor Wilson. This graph shows the t
 <div id="conclusions" class="section level1">
 <h1>Conclusions</h1>
 <p>In the data, we are able to see that in Citizen Science, there can be a lot of variability in observations. It’s interesting to see how data is collected from other individuals and how it contributes to a bigger picture. We can see from the graphs that although most leaves typically drop around October, some trees don’t drop their leaves until much later in the year. Citizen Science is very useful in terms of getting young scientists involved and helping to contribute data to solving a bigger problem. One of the main drawbacks of using citizen science data is the large variation in observations as shown in the table above. Even looking at one particular tag, we can see the huge amount of variation in observations between the different participants. This has implications in our interpretation of these results. We have to keep in mind that because there is such wide variation in amount of observations made and the actual data from the observations that we can not imply causation.</p>
+</div>
+<div id="future-work" class="section level1">
+<h1>Future Work</h1>
+<p>For work in the future, it would be neat to collect this data again next year and see how characteristics of the trees changed from year to year. It would also be neat to compare variation metrics between the different years of students. I think another next step would be to incorporate state level ecological data and see if trees in Western New York are different than those in other places of New York due to the differences in climate.</p>
 </div>
 <div id="references" class="section level1">
 <h1>References</h1>
